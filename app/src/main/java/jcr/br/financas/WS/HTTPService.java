@@ -1,6 +1,7 @@
 package jcr.br.financas.WS;
 
 import android.os.AsyncTask;
+import android.widget.ProgressBar;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,7 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class HTTPService extends AsyncTask<String, Void, String> {
+public class HTTPService extends AsyncTask<String,Void, String> {
     private final String codigo;
     private final URL url;
 

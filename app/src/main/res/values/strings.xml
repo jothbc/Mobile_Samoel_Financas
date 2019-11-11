@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">Financas</string>
     <string name="action_settings">Settings</string>
+    <string name="action_filtro_data">Filtro Data</string>
+    <string name="action_boleto">Boleto</string>
+    <string name="action_cheque">Cheque</string>
+    <string name="action_imposto">Imposto</string>
+    <string name="title_activity_boleto">BoletoActivity</string>
+    <string name="title_boleto">Boleto</string>
+    <string name="title_activity_lancar_boleto">Novo Boleto</string>
+    <string name="lbl_codigo">Código</string>
+    <string name="lbl_fornecedor">Fornecedor</string>
+    <string name="lbl_vencimento">Vencimento</string>
+    <string name="lbl_valor">Valor</string>
+    <string name="btn_lancar_boleto">Lançar Boleto</string>
 </resources>
