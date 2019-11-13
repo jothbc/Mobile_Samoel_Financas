@@ -13,4 +13,6 @@
     <string name="lbl_vencimento">Vencimento</string>
     <string name="lbl_valor">Valor</string>
     <string name="btn_lancar_boleto">Lançar Boleto</string>
+    <string name="message_request_nulo_vazio">REQUEST NULO OU VAZIO</string>
+
 </resources>

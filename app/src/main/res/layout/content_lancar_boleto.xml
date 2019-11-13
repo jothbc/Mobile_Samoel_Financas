@@ -19,13 +19,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/editBoletoCodigoBarras"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="10dp"
         android:ems="10"
         android:inputType="number"
         android:textAlignment="center"
+        android:textSize="8sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_codigo" />
@@ -38,10 +39,10 @@
         android:text="@string/lbl_fornecedor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+        app:layout_constraintTop_toBottomOf="@+id/editBoletoCodigoBarras" />
 
     <Spinner
-        android:id="@+id/spinner2"
+        android:id="@+id/spinnerBoletoFornecedor"
         android:layout_width="409dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -52,7 +53,7 @@
         app:layout_constraintTop_toBottomOf="@+id/txt_fornecedor" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/editBoletoVencimento"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -71,7 +72,7 @@
         android:text="@string/lbl_vencimento"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner2" />
+        app:layout_constraintTop_toBottomOf="@+id/spinnerBoletoFornecedor" />
 
     <TextView
         android:id="@+id/txt_valor"
@@ -81,10 +82,10 @@
         android:text="@string/lbl_valor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText2" />
+        app:layout_constraintTop_toBottomOf="@+id/editBoletoVencimento" />
 
     <EditText
-        android:id="@+id/editText3"
+        android:id="@+id/editBoletoValor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -101,7 +102,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/btn_lancar_boleto"
-        app:layout_constraintEnd_toEndOf="@+id/editText3"
-        app:layout_constraintStart_toStartOf="@+id/editText3"
-        app:layout_constraintTop_toBottomOf="@+id/editText3" />
+        app:layout_constraintEnd_toEndOf="@+id/editBoletoValor"
+        app:layout_constraintStart_toStartOf="@+id/editBoletoValor"
+        app:layout_constraintTop_toBottomOf="@+id/editBoletoValor" />
 </androidx.constraintlayout.widget.ConstraintLayout>

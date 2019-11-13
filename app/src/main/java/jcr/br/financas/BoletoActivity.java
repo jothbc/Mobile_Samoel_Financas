@@ -60,7 +60,7 @@ public class BoletoActivity extends AppCompatActivity {
     }
 
     private void carregarList() {
-        String url = "http://187.4.229.36:9999/mercadows/webresources/ws/Boleto/get/periodo/";
+        String url = "Boleto/get/periodo/";
         String param = filtroData.toString();
         String request = null;
         try {

@@ -78,7 +78,7 @@ public class Fornecedor implements Comparable {
     }
 
     public String toString() {
-        return this.nome + "  Banco: " + this.banco;
+        return this.nome;
     }
 
     @Override
