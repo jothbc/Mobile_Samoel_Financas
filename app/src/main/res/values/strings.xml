@@ -14,5 +14,11 @@
     <string name="lbl_valor">Valor</string>
     <string name="btn_lancar_boleto">Lançar Boleto</string>
     <string name="message_request_nulo_vazio">REQUEST NULO OU VAZIO</string>
+    <string name="message_tamanho_codigo_invalido">Tamanho do código inválido.</string>
+    <string name="message_erro_vencimento_invalido">Esse vencimento não é válido.</string>
+    <string name="message_erro_salvar">Erro ao salvar.</string>
+    <string name="message_duplicacao_boleto">Já existe um boleto com esse código de barras no sistema.</string>
+    <string name="tile_cad_fornecedor">Cadastrar Fornecedor</string>
+    <string name="message_concluido">concluído</string>
 
 </resources>

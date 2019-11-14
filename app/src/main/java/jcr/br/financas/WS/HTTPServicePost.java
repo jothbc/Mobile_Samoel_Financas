@@ -15,17 +15,22 @@ import jcr.br.financas.Boleto;
 
 public class HTTPServicePost extends AsyncTask<Boleto, Void, String> {
     private final Boleto boleto;
+    private final String base = "http://192.168.1.158:9999/mercadows/webresources/ws/";
+    private String caminho;
+    private String metodo;
 
-    public HTTPServicePost(Boleto boleto) {
+    public HTTPServicePost(Boleto boleto, String caminho, String metodo) {
         this.boleto = boleto;
+        this.caminho = caminho;
+        this.metodo = metodo;
     }
 
     @Override
     protected String doInBackground(Boleto... boletos) {
-         return sendPost("http://192.168.1.158:9999/mercadows/webresources/ws/Produto/post", new Gson().toJson(boleto), "POST");
+        return sendPost(base + caminho, new Gson().toJson(boleto), metodo);
     }
 
-    private String sendPost(String url, String json,String metodo) {
+    private String sendPost(String url, String json, String metodo) {
         try {
             // Cria um objeto HttpURLConnection:
             HttpURLConnection request = (HttpURLConnection) new URL(url).openConnection();
