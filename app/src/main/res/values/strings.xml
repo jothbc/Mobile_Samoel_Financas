@@ -20,5 +20,6 @@
     <string name="message_duplicacao_boleto">Já existe um boleto com esse código de barras no sistema.</string>
     <string name="tile_cad_fornecedor">Cadastrar Fornecedor</string>
     <string name="message_concluido">concluído</string>
+    <string name="lbl_data_pago">Data Pago</string>
 
 </resources>

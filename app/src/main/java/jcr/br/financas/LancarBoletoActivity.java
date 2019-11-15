@@ -53,7 +53,7 @@ public class LancarBoletoActivity extends AppCompatActivity {
     }
 
     private void buscarFornecedores(String codigo) {
-        if (codigo.toString().trim().isEmpty()) {
+        if (codigo.trim().isEmpty()) {
             return;
         }
         codigo = BoletoFuncoes.linhaDigitavelEmCodigoDeBarras(codigo.trim());

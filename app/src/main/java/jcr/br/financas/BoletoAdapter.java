@@ -11,6 +11,8 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import jcr.br.financas.funcoes.CDate;
+
 public class BoletoAdapter extends RecyclerView.Adapter<BoletoAdapter.BoletoViewHolder> {
     private List<Boleto> boletos;
 
@@ -32,8 +34,12 @@ public class BoletoAdapter extends RecyclerView.Adapter<BoletoAdapter.BoletoView
         if (boletos != null && !boletos.isEmpty()) {
             Boleto boleto = boletos.get(position);
 
-            holder.data.setText(boleto.getVencimento());
-            holder.pago.setText(boleto.getPago());
+            holder.data.setText(CDate.MYSQLtoPTBR(boleto.getVencimento()));
+            if (boleto.getPago() != null) {
+                holder.pago.setText(CDate.MYSQLtoPTBR(boleto.getPago()));
+            } else {
+                holder.pago.setText("");
+            }
             holder.valor.setText(new DecimalFormat("0.00").format(boleto.getValor()));
             holder.fornecedor.setText(boleto.getFornecedor_id().getNome());
         }
