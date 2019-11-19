@@ -62,7 +62,7 @@ public class LancarBoletoActivity extends AppCompatActivity {
             return;
         }
         try {
-            HTTPService service = new HTTPService("/Boleto/get/testeFornecedor/", codigo);
+            HTTPService service = new HTTPService("/Boleto/get/testeFornecedor/", codigo,this.getApplicationContext());
             String request = service.execute().get();
             if (request != null && !request.equals("[]")) {
                 fornecedores = new Gson().fromJson(request, Fornecedor[].class);
@@ -71,7 +71,7 @@ public class LancarBoletoActivity extends AppCompatActivity {
                 preencherValor(codigo);
             } else {
                 System.out.println("REQUEST NULO/VAZIO");
-                Toast.makeText(this.getApplicationContext(), (R.string.message_request_nulo_vazio), Toast.LENGTH_LONG).show();
+                //Toast.makeText(this.getApplicationContext(), (R.string.message_request_nulo_vazio), Toast.LENGTH_LONG).show();
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -93,7 +93,11 @@ public class LancarBoletoActivity extends AppCompatActivity {
 
     private void preencherVenciment(String codigo) {
         EditText vencimentoEdit = findViewById(R.id.editBoletoVencimento);
-        vencimentoEdit.setText(BoletoFuncoes.getVencimento(codigo));
+        String venc_temp = BoletoFuncoes.getVencimento(codigo);
+        if(venc_temp.equals(CDate.getDataInicialBanco())){
+            return;
+        }
+        vencimentoEdit.setText(venc_temp);
     }
 
     private void preecherComboBox() {
