@@ -10,6 +10,7 @@ import com.google.zxing.integration.android.IntentResult;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import jcr.br.financas.WS.HTTPService;
 import jcr.br.financas.WS.HTTPServicePost;
 import jcr.br.financas.funcoes.BoletoFuncoes;
@@ -31,6 +32,10 @@ public class LancarBoletoActivity extends AppCompatActivity {
     private EditText codigo_barras;
     private Spinner spinnerFornecedor;
     private Fornecedor[] fornecedores;
+    public static String error = null;
+
+    public static String cd_barras = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,16 +67,17 @@ public class LancarBoletoActivity extends AppCompatActivity {
             return;
         }
         try {
-            HTTPService service = new HTTPService("/Boleto/get/testeFornecedor/", codigo,this.getApplicationContext());
+            HTTPService service = new HTTPService("/Boleto/get/testeFornecedor/", codigo);
             String request = service.execute().get();
             if (request != null && !request.equals("[]")) {
                 fornecedores = new Gson().fromJson(request, Fornecedor[].class);
                 preecherComboBox();
-                preencherVenciment(codigo);
-                preencherValor(codigo);
+                if (preencherVenciment(codigo)) {
+                    preencherValor(codigo);
+                }
             } else {
                 System.out.println("REQUEST NULO/VAZIO");
-                //Toast.makeText(this.getApplicationContext(), (R.string.message_request_nulo_vazio), Toast.LENGTH_LONG).show();
+                Toast.makeText(this.getApplicationContext(), error, Toast.LENGTH_LONG).show();
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -91,13 +97,14 @@ public class LancarBoletoActivity extends AppCompatActivity {
         valorEdit.setText(new DecimalFormat("0.00").format(valor));
     }
 
-    private void preencherVenciment(String codigo) {
+    private boolean preencherVenciment(String codigo) {
         EditText vencimentoEdit = findViewById(R.id.editBoletoVencimento);
         String venc_temp = BoletoFuncoes.getVencimento(codigo);
-        if(venc_temp.equals(CDate.getDataInicialBanco())){
-            return;
+        if (venc_temp.equals(CDate.getDataInicialBanco())) {
+            return false;
         }
         vencimentoEdit.setText(venc_temp);
+        return true;
     }
 
     private void preecherComboBox() {
@@ -159,7 +166,8 @@ public class LancarBoletoActivity extends AppCompatActivity {
             } else if (response.equals("existe")) {
                 Toast.makeText(this, (R.string.message_duplicacao_boleto), Toast.LENGTH_SHORT).show();
                 return;
-            }if(response.equals("concluido")){
+            }
+            if (response.equals("concluido")) {
                 Toast.makeText(this, (R.string.message_concluido), Toast.LENGTH_SHORT).show();
             }
         } catch (Exception ex) {
@@ -176,6 +184,13 @@ public class LancarBoletoActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_boleto, menu);
+        return true;
+    }
+
+    public void initCadFornecedor(View view){
+        cd_barras = BoletoFuncoes.linhaDigitavelEmCodigoDeBarras(codigo_barras.getText().toString().trim());
+        Intent intentCadFornecedor= new Intent(LancarBoletoActivity.this,CadFornecedorBoletoActivity.class);
+        startActivity(intentCadFornecedor);
     }
 }

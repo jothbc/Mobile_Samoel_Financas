@@ -14,19 +14,19 @@ import java.net.MalformedURLException;
 import java.net.ResponseCache;
 import java.net.URL;
 
+import jcr.br.financas.LancarBoletoActivity;
+
 public class HTTPService extends AsyncTask<String, Void, String> {
     private final String codigo;
     private final URL url;
     private final String base = "http://187.4.229.36:9999/mercadows/webresources/ws/";
-    private final Context context;
 
-    public HTTPService(String url, String parametro, Context context) throws MalformedURLException {
+    public HTTPService(String url, String parametro) throws MalformedURLException {
         this.codigo = parametro;
         this.url = new URL(base + url + parametro);
-        this.context=context;
     }
-    @Override
-    protected String doInBackground(String... parametros) {
+
+    protected String doInBackground(String... params) {
         StringBuilder resposta = new StringBuilder();
 
         try {
@@ -44,7 +44,7 @@ public class HTTPService extends AsyncTask<String, Void, String> {
                 in.close();
                 return resposta.toString();
             } else {
-                Toast.makeText(context,"ERRO: "+String.valueOf(request.getResponseCode()),Toast.LENGTH_LONG).show();
+                LancarBoletoActivity.error = String.valueOf(request.getResponseCode());
                 return null;
             }
         } catch (MalformedURLException e) {

@@ -3,5 +3,6 @@
 
     <item
         android:id="@+id/action_cad_fornecedor"
+        android:onClick="initCadFornecedor"
         android:title="@string/tile_cad_fornecedor" />
 </menu>

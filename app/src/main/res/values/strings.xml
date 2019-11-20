@@ -21,5 +21,7 @@
     <string name="tile_cad_fornecedor">Cadastrar Fornecedor</string>
     <string name="message_concluido">concluído</string>
     <string name="lbl_data_pago">Data Pago</string>
+    <string name="title_activity_cad_fornecedor_boleto">CadFornecedorBoletoActivity</string>
+    <string name="lbl_banco">Banco</string>
 
 </resources>

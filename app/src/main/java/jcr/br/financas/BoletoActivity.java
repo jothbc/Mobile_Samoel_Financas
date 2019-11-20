@@ -64,7 +64,7 @@ public class BoletoActivity extends AppCompatActivity {
         String param = filtroData.toString();
         String request = null;
         try {
-            HTTPService service = new HTTPService(url, param,this.getApplicationContext());
+            HTTPService service = new HTTPService(url, param);
             request = service.execute().get();
             boletos = Arrays.asList(new Gson().fromJson(request, Boleto[].class));
 
