@@ -23,6 +23,12 @@ public class Fornecedor implements Comparable {
         this.numero = null;
     }
 
+    public Fornecedor(String nome, int banco, String numero) {
+        this.nome = nome;
+        this.banco = banco;
+        this.numero = numero;
+    }
+
     /**
      * @return the id
      */

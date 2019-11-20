@@ -23,5 +23,7 @@
     <string name="lbl_data_pago">Data Pago</string>
     <string name="title_activity_cad_fornecedor_boleto">CadFornecedorBoletoActivity</string>
     <string name="lbl_banco">Banco</string>
+    <string name="lbl_numero_fornecedor">Número Fornecedor</string>
+    <string name="lbl_Confirmar_Cadastro" >Confirmar Cadastro</string>
 
 </resources>

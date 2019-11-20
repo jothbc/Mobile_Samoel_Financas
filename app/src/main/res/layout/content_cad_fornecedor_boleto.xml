@@ -42,7 +42,7 @@
         app:layout_constraintTop_toBottomOf="@+id/editCadNomeFornecedor" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/editCadBancoFornecedor"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -51,5 +51,37 @@
         app:layout_constraintEnd_toEndOf="@+id/txt_banco"
         app:layout_constraintStart_toStartOf="@+id/txt_banco"
         app:layout_constraintTop_toBottomOf="@+id/txt_banco" />
+
+    <TextView
+        android:id="@+id/txt_numeroForn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/lbl_numero_fornecedor"
+        app:layout_constraintEnd_toEndOf="@+id/editCadBancoFornecedor"
+        app:layout_constraintStart_toStartOf="@+id/editCadBancoFornecedor"
+        app:layout_constraintTop_toBottomOf="@+id/editCadBancoFornecedor" />
+
+    <EditText
+        android:id="@+id/editCadNumeroFornecedor"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="@+id/txt_numeroForn"
+        app:layout_constraintStart_toStartOf="@+id/txt_numeroForn"
+        app:layout_constraintTop_toBottomOf="@+id/txt_numeroForn" />
+
+    <Button
+        android:id="@+id/btn_Cadastrar_Fornecedor"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:onClick="concluirCadastro"
+        android:text="@string/lbl_Confirmar_Cadastro"
+        app:layout_constraintEnd_toEndOf="@+id/editCadNumeroFornecedor"
+        app:layout_constraintStart_toStartOf="@+id/editCadNumeroFornecedor"
+        app:layout_constraintTop_toBottomOf="@+id/editCadNumeroFornecedor" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
