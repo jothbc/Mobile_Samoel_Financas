@@ -27,9 +27,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class BoletoActivity extends AppCompatActivity {
-    private RecyclerView listBoletos;
     private BoletoAdapter boletoAdapter;
-    private List<Boleto> boletos;
     public static FiltroData filtroData;
 
     @Override
@@ -42,15 +40,14 @@ public class BoletoActivity extends AppCompatActivity {
 
         definirDatasFiltroList();
         carregarList();
-
-        FloatingActionButton floatingActionLancarBoleto = findViewById(R.id.floatingActionLancarBoleto);
-        floatingActionLancarBoleto.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton floatingActionButton = findViewById(R.id.floatingActionLancarBoleto);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent lancarBoleto= new Intent(BoletoActivity.this,LancarBoletoActivity.class);
-                startActivity(lancarBoleto);
+                initLancarBoleto(v);
             }
         });
+
     }
 
     private void definirDatasFiltroList() {
@@ -66,9 +63,9 @@ public class BoletoActivity extends AppCompatActivity {
         try {
             HTTPService service = new HTTPService(url, param);
             request = service.execute().get();
-            boletos = Arrays.asList(new Gson().fromJson(request, Boleto[].class));
+            List<Boleto> boletos = Arrays.asList(new Gson().fromJson(request, Boleto[].class));
 
-            listBoletos = findViewById(R.id.list_dados);
+            RecyclerView listBoletos = findViewById(R.id.list_dados);
             listBoletos.setHasFixedSize(true);
 
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -86,22 +83,8 @@ public class BoletoActivity extends AppCompatActivity {
         }
     }
 
-    public void scanCodigo(View view) {
-        IntentIntegrator integrator = new IntentIntegrator(this);
-        integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
-        integrator.setCameraId(0);
-        integrator.setPrompt("Scan Boleto");
-        integrator.initiateScan();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result != null) {
-            if (result.getContents() != null) {
-                //codigo esta aqui result.getContents();
-            }
-        } else
-            super.onActivityResult(requestCode, resultCode, data);
+    public void initLancarBoleto(View view){
+        Intent lancarBoleto= new Intent(BoletoActivity.this,LancarBoletoActivity.class);
+        startActivity(lancarBoleto);
     }
 }

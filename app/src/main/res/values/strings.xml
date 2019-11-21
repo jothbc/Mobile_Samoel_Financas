@@ -25,5 +25,7 @@
     <string name="lbl_banco">Banco</string>
     <string name="lbl_numero_fornecedor">Número Fornecedor</string>
     <string name="lbl_Confirmar_Cadastro" >Confirmar Cadastro</string>
+    <string name="lbl_Cheque">Cheque</string>
+    <string name="lbl_Imposto">Imposto</string>
 
 </resources>

@@ -1,34 +1,26 @@
 package jcr.br.financas.WS;
 
-import android.app.AlertDialog;
-import android.content.Context;
 import android.os.AsyncTask;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ResponseCache;
 import java.net.URL;
 
 import jcr.br.financas.LancarBoletoActivity;
 
 public class HTTPService extends AsyncTask<String, Void, String> {
-    private final String codigo;
     private final URL url;
     private final String base = "http://187.4.229.36:9999/mercadows/webresources/ws/";
 
     public HTTPService(String url, String parametro) throws MalformedURLException {
-        this.codigo = parametro;
         this.url = new URL(base + url + parametro);
     }
 
     protected String doInBackground(String... params) {
         StringBuilder resposta = new StringBuilder();
-
         try {
             HttpURLConnection request = (HttpURLConnection) url.openConnection();
             request.setRequestMethod("GET");

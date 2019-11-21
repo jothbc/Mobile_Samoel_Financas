@@ -13,21 +13,21 @@ import java.net.URL;
 
 import jcr.br.financas.Boleto;
 
-public class HTTPServicePost extends AsyncTask<Boleto, Void, String> {
-    private final Boleto boleto;
+public class HTTPServicePost extends AsyncTask<String, Void, String> {
     private final String base = "http://192.168.1.158:9999/mercadows/webresources/ws/";
     private String caminho;
     private String metodo;
+    private String json;
 
-    public HTTPServicePost(Boleto boleto, String caminho, String metodo) {
-        this.boleto = boleto;
+    public HTTPServicePost(String json, String caminho, String metodo) {
+        this.json = json;
         this.caminho = caminho;
         this.metodo = metodo;
     }
 
     @Override
-    protected String doInBackground(Boleto... boletos) {
-        return sendPost(base + caminho, new Gson().toJson(boleto), metodo);
+    protected String doInBackground(String... params) {
+        return sendPost(base + caminho, json, metodo);
     }
 
     private String sendPost(String url, String json, String metodo) {
