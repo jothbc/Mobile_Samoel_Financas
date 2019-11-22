@@ -107,4 +107,5 @@
         app:layout_constraintEnd_toEndOf="@+id/editBoletoValor"
         app:layout_constraintStart_toStartOf="@+id/editBoletoValor"
         app:layout_constraintTop_toBottomOf="@+id/editBoletoValor" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

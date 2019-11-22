@@ -26,6 +26,7 @@ public class CadFornecedorBoletoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cad_fornecedor_boleto);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        this.setTitle("Cadastrar Fornecedor");
         init();
     }
 

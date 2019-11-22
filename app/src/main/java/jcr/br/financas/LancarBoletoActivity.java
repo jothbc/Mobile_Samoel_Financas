@@ -71,16 +71,16 @@ public class LancarBoletoActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.menu_lancar_boleto,menu);
+        menuInflater.inflate(R.menu.menu_lancar_boleto, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch(id){
+        switch (id) {
             case R.id.action_cad_fornecedor:
-                Intent cadFornecedor = new Intent(LancarBoletoActivity.this,CadFornecedorBoletoActivity.class);
+                Intent cadFornecedor = new Intent(LancarBoletoActivity.this, CadFornecedorBoletoActivity.class);
                 startActivity(cadFornecedor);
                 break;
         }
@@ -176,7 +176,7 @@ public class LancarBoletoActivity extends AppCompatActivity {
         try {
             if (vencimentoEdit.getText().equals(CDate.getDataInicialBanco())) {
                 Toast.makeText(this, (R.string.message_erro_vencimento_invalido), Toast.LENGTH_SHORT).show();
-                throw new Exception(getString(R.string.message_erro_vencimento_invalido));
+                return;
             }
             Boleto boleto = new Boleto();
             boleto.setFornecedor_id((Fornecedor) spinnerFornecedor.getSelectedItem());
@@ -190,17 +190,21 @@ public class LancarBoletoActivity extends AppCompatActivity {
 
             HTTPServicePost httpServicePost = new HTTPServicePost(new Gson().toJson(boleto), "Boleto/post/", "POST");
             String response = httpServicePost.execute().get();
+            if(response==null){
+                Toast.makeText(this, "RESPONSE RETORNANDO NULL", Toast.LENGTH_SHORT).show();
+                return;
+            }
             if (response.equals("falha")) {
                 Toast.makeText(this, (R.string.message_erro_salvar), Toast.LENGTH_SHORT).show();
                 return;
             } else if (response.equals("existe")) {
                 Toast.makeText(this, (R.string.message_duplicacao_boleto), Toast.LENGTH_SHORT).show();
                 return;
-            }
-            if (response.equals("concluido")) {
+            } else if (response.equals("concluido")) {
                 Toast.makeText(this, (R.string.message_concluido), Toast.LENGTH_SHORT).show();
             }
         } catch (Exception ex) {
+            System.err.println(ex);
             Toast.makeText(this, (R.string.message_erro_salvar) + "\n" + ex, Toast.LENGTH_SHORT).show();
         } finally {
             codigoEdit.setText("");
@@ -211,7 +215,6 @@ public class LancarBoletoActivity extends AppCompatActivity {
             codigoEdit.requestFocus();
         }
     }
-
 
 
     public void initCadFornecedor(View view) {
