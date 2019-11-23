@@ -9,7 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import jcr.br.financas.LancarBoletoActivity;
+import jcr.br.financas.model.MyException;
 
 public class HTTPService extends AsyncTask<String, Void, String> {
     private final URL url;
@@ -19,7 +19,7 @@ public class HTTPService extends AsyncTask<String, Void, String> {
         this.url = new URL(base + url + parametro);
     }
 
-    protected String doInBackground(String... params) {
+    protected String doInBackground(String... ex) {
         StringBuilder resposta = new StringBuilder();
         try {
             HttpURLConnection request = (HttpURLConnection) url.openConnection();
@@ -27,7 +27,8 @@ public class HTTPService extends AsyncTask<String, Void, String> {
             request.setRequestProperty("Accept", "application/json");
             request.setConnectTimeout(3000);
             request.connect();
-            if (request.getResponseCode() == 200) {
+            MyException.code = request.getResponseCode();
+            if (request.getResponseCode() / 100 == 2) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
                 String inputLine;
                 while ((inputLine = in.readLine()) != null) {
@@ -35,10 +36,8 @@ public class HTTPService extends AsyncTask<String, Void, String> {
                 }
                 in.close();
                 return resposta.toString();
-            } else {
-                LancarBoletoActivity.error = String.valueOf(request.getResponseCode());
-                return null;
             }
+            return null;
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return null;

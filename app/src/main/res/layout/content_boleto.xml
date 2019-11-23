@@ -8,6 +8,28 @@
     tools:context=".BoletoActivity"
     tools:showIn="@layout/activity_boleto">
 
+    <EditText
+        android:id="@+id/editBoletoDataInicial"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:ems="10"
+        android:inputType="date"
+        android:textSize="10sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editBoletoDataFinal"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="24dp"
+        android:ems="10"
+        android:inputType="date"
+        android:textSize="10sp"
+        app:layout_constraintStart_toEndOf="@+id/editBoletoDataInicial"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_dados"
         android:layout_width="0dp"
@@ -25,9 +47,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/lbl_vencimento"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/editBoletoDataInicial" />
 
     <TextView
         android:id="@+id/textView2"
@@ -36,7 +59,7 @@
         android:layout_marginStart="32dp"
         android:text="@string/lbl_data_pago"
         app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/textView" />
 
     <TextView
         android:id="@+id/textView3"
@@ -45,6 +68,17 @@
         android:layout_marginEnd="16dp"
         android:text="@string/lbl_valor"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textView2" />
+
+    <Button
+        android:id="@+id/buttonBoletoFiltrarData"
+        android:layout_width="50dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:onClick="btn_ok_action"
+        android:text="@android:string/ok"
+        android:textSize="10sp"
+        app:layout_constraintStart_toEndOf="@+id/editBoletoDataFinal"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

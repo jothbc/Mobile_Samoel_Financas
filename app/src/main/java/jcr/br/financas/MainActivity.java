@@ -8,25 +8,16 @@ import com.google.gson.Gson;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import jcr.br.financas.WS.HTTPService;
 import jcr.br.financas.WS.send;
-import jcr.br.financas.funcoes.CDate;
-import jcr.br.financas.funcoes.CDbl;
 import jcr.br.financas.funcoes.Conv;
-import jcr.br.financas.model.FiltroData;
+import jcr.br.financas.model.MyException;
 
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
@@ -87,6 +78,5 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
 
 }

@@ -28,5 +28,7 @@
     <string name="lbl_Cheque">Cheque</string>
     <string name="lbl_Imposto">Imposto</string>
     <string name="lbl_Outros">Outros</string>
+    <string name="erro_data_inicial_maior_final">ERRO: A data incial é maior que a final.</string>
+    <string name="erro_data_inicial_invalida">Data inicial inválida</string>
 
 </resources>

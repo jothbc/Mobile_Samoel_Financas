@@ -2,13 +2,12 @@ package jcr.br.financas;
 
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import jcr.br.financas.WS.HTTPServicePost;
+import jcr.br.financas.model.Fornecedor;
 
 import android.view.View;
 import android.widget.EditText;
@@ -36,7 +35,7 @@ public class CadFornecedorBoletoActivity extends AppCompatActivity {
         numero = findViewById(R.id.editCadNumeroFornecedor);
         if (LancarBoletoActivity.cd_barras != null) {
             numero.setText(LancarBoletoActivity.cd_barras.substring(25, 29));
-            banco.setText(LancarBoletoActivity.cd_barras.substring(3));
+            banco.setText(LancarBoletoActivity.cd_barras.substring(0,3));
         }
     }
 

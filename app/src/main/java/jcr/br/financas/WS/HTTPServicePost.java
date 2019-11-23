@@ -2,8 +2,6 @@ package jcr.br.financas.WS;
 
 import android.os.AsyncTask;
 
-import com.google.gson.Gson;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,7 +9,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import jcr.br.financas.Boleto;
+import jcr.br.financas.model.MyException;
 
 public class HTTPServicePost extends AsyncTask<String, Void, String> {
     private final String base = "http://192.168.1.158:9999/mercadows/webresources/ws/";
@@ -58,7 +56,12 @@ public class HTTPServicePost extends AsyncTask<String, Void, String> {
 
                 // Caso você queira usar o código HTTP para fazer alguma coisa, descomente esta linha.
                 //int response = request.getResponseCode();
-                return readResponse(request);
+                MyException.code = request.getResponseCode();
+                if (request.getResponseCode() / 100 == 2) {
+                    return readResponse(request);
+                }else{
+                    return null;
+                }
             } finally {
                 request.disconnect();
             }

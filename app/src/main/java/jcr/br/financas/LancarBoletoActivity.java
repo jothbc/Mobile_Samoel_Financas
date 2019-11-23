@@ -16,6 +16,9 @@ import jcr.br.financas.WS.HTTPService;
 import jcr.br.financas.WS.HTTPServicePost;
 import jcr.br.financas.funcoes.BoletoFuncoes;
 import jcr.br.financas.funcoes.CDate;
+import jcr.br.financas.model.Boleto;
+import jcr.br.financas.model.Fornecedor;
+import jcr.br.financas.model.MyException;
 
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -80,6 +83,7 @@ public class LancarBoletoActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (id) {
             case R.id.action_cad_fornecedor:
+                cd_barras = BoletoFuncoes.linhaDigitavelEmCodigoDeBarras(codigo_barras.getText().toString().trim());
                 Intent cadFornecedor = new Intent(LancarBoletoActivity.this, CadFornecedorBoletoActivity.class);
                 startActivity(cadFornecedor);
                 break;
@@ -190,17 +194,20 @@ public class LancarBoletoActivity extends AppCompatActivity {
 
             HTTPServicePost httpServicePost = new HTTPServicePost(new Gson().toJson(boleto), "Boleto/post/", "POST");
             String response = httpServicePost.execute().get();
-            if(response==null){
-                Toast.makeText(this, "RESPONSE RETORNANDO NULL", Toast.LENGTH_SHORT).show();
+            if (response == null) {
+                switch (MyException.code) {
+                    case 304:
+                        Toast.makeText(this, R.string.message_duplicacao_boleto, Toast.LENGTH_SHORT).show();
+                        break;
+                    case 204:
+                        Toast.makeText(this, R.string.message_erro_salvar, Toast.LENGTH_SHORT).show();
+                        break;
+                    case 200://basicamente nem vai usar essa linha, mas caso futuramente a classe HTTPServicePost mude, aqui ainda continua funcionando.
+                        Toast.makeText(this, (R.string.message_concluido), Toast.LENGTH_SHORT).show();
+                        break;
+                }
                 return;
-            }
-            if (response.equals("falha")) {
-                Toast.makeText(this, (R.string.message_erro_salvar), Toast.LENGTH_SHORT).show();
-                return;
-            } else if (response.equals("existe")) {
-                Toast.makeText(this, (R.string.message_duplicacao_boleto), Toast.LENGTH_SHORT).show();
-                return;
-            } else if (response.equals("concluido")) {
+            } else {
                 Toast.makeText(this, (R.string.message_concluido), Toast.LENGTH_SHORT).show();
             }
         } catch (Exception ex) {
@@ -217,9 +224,4 @@ public class LancarBoletoActivity extends AppCompatActivity {
     }
 
 
-    public void initCadFornecedor(View view) {
-        cd_barras = BoletoFuncoes.linhaDigitavelEmCodigoDeBarras(codigo_barras.getText().toString().trim());
-        Intent intentCadFornecedor = new Intent(LancarBoletoActivity.this, CadFornecedorBoletoActivity.class);
-        startActivity(intentCadFornecedor);
-    }
 }

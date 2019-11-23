@@ -1,4 +1,4 @@
-package jcr.br.financas;
+package jcr.br.financas.Adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +11,9 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import jcr.br.financas.R;
 import jcr.br.financas.funcoes.CDate;
+import jcr.br.financas.model.Boleto;
 
 public class BoletoAdapter extends RecyclerView.Adapter<BoletoAdapter.BoletoViewHolder> {
     private List<Boleto> boletos;

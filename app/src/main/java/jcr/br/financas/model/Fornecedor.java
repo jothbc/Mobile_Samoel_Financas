@@ -1,4 +1,4 @@
-package jcr.br.financas;
+package jcr.br.financas.model;
 
 public class Fornecedor implements Comparable {
 

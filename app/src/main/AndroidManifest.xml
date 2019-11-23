@@ -22,6 +22,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".BoletoActivity"
+            android:windowSoftInputMode="stateHidden"
             android:label="@string/title_activity_boleto"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
