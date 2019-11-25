@@ -10,39 +10,41 @@
 
     <TextView
         android:id="@+id/txtBoleto"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
         android:text="@string/title_boleto"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/editBoletoValorAberto"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/editBoletoValorAberto" />
 
     <EditText
         android:id="@+id/editBoletoValorAberto"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
         android:clickable="false"
         android:ems="10"
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="@+id/txtBoleto"
-        app:layout_constraintStart_toStartOf="@+id/txtBoleto"
-        app:layout_constraintTop_toBottomOf="@+id/txtBoleto" />
+        android:textAlignment="textEnd"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/txtBoleto"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/txtCheque"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:text="@string/lbl_Cheque"
-        app:layout_constraintEnd_toEndOf="@+id/editBoletoValorAberto"
-        app:layout_constraintStart_toStartOf="@+id/editBoletoValorAberto"
-        app:layout_constraintTop_toBottomOf="@+id/editBoletoValorAberto" />
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/editChequeValorAberto"
+        app:layout_constraintStart_toStartOf="@+id/txtBoleto"
+        app:layout_constraintTop_toTopOf="@+id/editChequeValorAberto" />
 
     <EditText
         android:id="@+id/editChequeValorAberto"
@@ -54,19 +56,20 @@
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="@+id/txtCheque"
-        app:layout_constraintStart_toStartOf="@+id/txtCheque"
-        app:layout_constraintTop_toBottomOf="@+id/txtCheque" />
+        android:textAlignment="textEnd"
+        app:layout_constraintEnd_toEndOf="@+id/editBoletoValorAberto"
+        app:layout_constraintStart_toStartOf="@+id/editBoletoValorAberto"
+        app:layout_constraintTop_toBottomOf="@+id/editBoletoValorAberto" />
 
     <TextView
         android:id="@+id/txtImposto"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:text="@string/lbl_Imposto"
-        app:layout_constraintEnd_toEndOf="@+id/editChequeValorAberto"
-        app:layout_constraintStart_toStartOf="@+id/editChequeValorAberto"
-        app:layout_constraintTop_toBottomOf="@+id/editChequeValorAberto" />
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/editImpostoValorAberto"
+        app:layout_constraintStart_toStartOf="@+id/txtCheque"
+        app:layout_constraintTop_toTopOf="@+id/editImpostoValorAberto" />
 
     <EditText
         android:id="@+id/editImpostoValorAberto"
@@ -78,7 +81,34 @@
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="@+id/txtImposto"
+        android:textAlignment="textEnd"
+        app:layout_constraintEnd_toEndOf="@+id/editChequeValorAberto"
+        app:layout_constraintStart_toStartOf="@+id/editChequeValorAberto"
+        app:layout_constraintTop_toBottomOf="@+id/editChequeValorAberto" />
+
+    <TextView
+        android:id="@+id/txtTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/lbl_total"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/editTotalValorAberto"
         app:layout_constraintStart_toStartOf="@+id/txtImposto"
-        app:layout_constraintTop_toBottomOf="@+id/txtImposto" />
+        app:layout_constraintTop_toTopOf="@+id/editTotalValorAberto" />
+
+    <EditText
+        android:id="@+id/editTotalValorAberto"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:clickable="false"
+        android:ems="10"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:inputType="textPersonName"
+        android:textAlignment="textEnd"
+        app:layout_constraintEnd_toEndOf="@+id/editImpostoValorAberto"
+        app:layout_constraintStart_toStartOf="@+id/editImpostoValorAberto"
+        app:layout_constraintTop_toBottomOf="@+id/editImpostoValorAberto" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

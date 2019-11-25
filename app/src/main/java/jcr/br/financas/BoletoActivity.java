@@ -13,13 +13,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import jcr.br.financas.Adapter.BoletoAdapter;
 import jcr.br.financas.WS.HTTPService;
 import jcr.br.financas.funcoes.CDate;
+import jcr.br.financas.funcoes.Conv;
 import jcr.br.financas.model.Boleto;
 import jcr.br.financas.model.FiltroData;
 import jcr.br.financas.model.MyException;
 
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -36,6 +37,7 @@ public class BoletoActivity extends AppCompatActivity {
     public static FiltroData filtroData;
     private EditText editInicial, editFinal;
     private FloatingActionButton floatingActionButton;
+    private static final int DIAS_FILTRO = -7;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +46,11 @@ public class BoletoActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         this.setTitle(getString(R.string.title_boleto));
+
         editInicial = findViewById(R.id.editBoletoDataInicial);
         editFinal = findViewById(R.id.editBoletoDataFinal);
 
-        iniciarDatasFiltroList(-10);
+        iniciarDatasFiltroList(DIAS_FILTRO);
         try {
             definirDatasFiltroList();
             carregarList();
@@ -61,7 +64,6 @@ public class BoletoActivity extends AppCompatActivity {
                 initLancarBoleto(v);
             }
         });
-        floatingActionButton.requestFocus();
     }
 
     private void iniciarDatasFiltroList(int diasInicial) {
@@ -79,7 +81,7 @@ public class BoletoActivity extends AppCompatActivity {
             filtroData.inicio = editInicial.getText().toString();
             try {
                 fim = new SimpleDateFormat("dd/MM/yyyy").parse(editFinal.getText().toString());
-                if(fim.before(ini)){
+                if (fim.before(ini)) {
                     throw new Exception(getString(R.string.erro_data_inicial_maior_final));
                 }
                 filtroData.fim = editFinal.getText().toString();
@@ -93,6 +95,7 @@ public class BoletoActivity extends AppCompatActivity {
     }
 
     private void carregarList() {
+        TextView txt_valor_aberto = findViewById(R.id.txtBoletoValorListaAberto);
         try {
             String url = "Boleto/get/periodo/";
             String param = filtroData.toString();
@@ -117,12 +120,24 @@ public class BoletoActivity extends AppCompatActivity {
 
             boletoAdapter = new BoletoAdapter(boletos);
             listBoletos.setAdapter(boletoAdapter);
+            double valor_aberto = 0;
+            if (!boletos.isEmpty()) {
+                for (Boleto b : boletos) {
+                    if (b.getPago() == null) {
+                        valor_aberto += b.getValor();
+                    }
+                }
+            }
+            txt_valor_aberto.setText(getString(R.string.lbl_valor_em_aberto) + " R$" +Conv.colocarPontoEmValor(Conv.validarValue(valor_aberto)));
         } catch (IOException e) {
             e.printStackTrace();
+            txt_valor_aberto.setText(e.getMessage());
         } catch (InterruptedException e) {
             e.printStackTrace();
+            txt_valor_aberto.setText(e.getMessage());
         } catch (ExecutionException e) {
             e.printStackTrace();
+            txt_valor_aberto.setText(e.getMessage());
         }
     }
 
@@ -138,6 +153,6 @@ public class BoletoActivity extends AppCompatActivity {
         } catch (Exception e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
-        floatingActionButton.requestFocus();
     }
+
 }

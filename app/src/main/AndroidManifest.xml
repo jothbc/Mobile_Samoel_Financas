@@ -13,18 +13,22 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".ChequeActivity"
+            android:label="@string/title_activity_cheque"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
             android:name=".CadFornecedorBoletoActivity"
             android:label="@string/title_activity_cad_fornecedor_boleto"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".LancarBoletoActivity"
             android:label="@string/title_activity_lancar_boleto"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".BoletoActivity"
-            android:windowSoftInputMode="stateHidden"
             android:label="@string/title_activity_boleto"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"

@@ -24,11 +24,22 @@
     <string name="title_activity_cad_fornecedor_boleto">CadFornecedorBoletoActivity</string>
     <string name="lbl_banco">Banco</string>
     <string name="lbl_numero_fornecedor">Número Fornecedor</string>
-    <string name="lbl_Confirmar_Cadastro" >Confirmar Cadastro</string>
+    <string name="lbl_Confirmar_Cadastro">Confirmar Cadastro</string>
     <string name="lbl_Cheque">Cheque</string>
     <string name="lbl_Imposto">Imposto</string>
     <string name="lbl_Outros">Outros</string>
     <string name="erro_data_inicial_maior_final">ERRO: A data incial é maior que a final.</string>
     <string name="erro_data_inicial_invalida">Data inicial inválida</string>
+    <string name="lbl_inicio">Início</string>
+    <string name="lbl_fim">Fim</string>
+    <string name="lbl_valor_em_aberto">Valor em Aberto</string>
+    <string name="lbl_total">Total</string>
+    <string name="title_activity_cheque">Cheques</string>
+    <string name="lbl_em_aberto">Em Aberto</string>
+    <string name="lbl_pago">Pago</string>
+    <string name="lbl_Pago">Pago</string>
+    <string name="lbl_todos">Todos</string>
+    <string name="lbl_emissao_abreviado">E:</string>
+    <string name="lbl_vencimento_abreviado">V:</string>
 
 </resources>
