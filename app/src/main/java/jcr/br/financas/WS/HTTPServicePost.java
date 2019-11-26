@@ -12,7 +12,7 @@ import java.net.URL;
 import jcr.br.financas.model.MyException;
 
 public class HTTPServicePost extends AsyncTask<String, Void, String> {
-    private final String base = "http://192.168.1.158:9999/mercadows/webresources/ws/";
+    private final String base = "http://192.168.1.158:9999/mercadows/webresources/ws2/";
     private String caminho;
     private String metodo;
     private String json;

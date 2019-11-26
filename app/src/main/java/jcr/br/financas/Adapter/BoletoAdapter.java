@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import jcr.br.financas.R;
 import jcr.br.financas.funcoes.CDate;
+import jcr.br.financas.funcoes.Conv;
 import jcr.br.financas.model.Boleto;
 
 public class BoletoAdapter extends RecyclerView.Adapter<BoletoAdapter.BoletoViewHolder> {
@@ -42,7 +43,7 @@ public class BoletoAdapter extends RecyclerView.Adapter<BoletoAdapter.BoletoView
             } else {
                 holder.pago.setText("");
             }
-            holder.valor.setText(new DecimalFormat("0.00").format(boleto.getValor()));
+            holder.valor.setText(Conv.colocarPontoEmValor(Conv.validarValue(boleto.getValor())));
             holder.fornecedor.setText(boleto.getFornecedor_id().getNome());
         }
     }

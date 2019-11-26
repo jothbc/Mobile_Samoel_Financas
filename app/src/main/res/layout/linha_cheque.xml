@@ -57,7 +57,7 @@
         app:layout_constraintTop_toBottomOf="@+id/txt_e_no_alterable" />
 
     <TextView
-        android:id="@+id/textView9"
+        android:id="@+id/txt_cheque_data_vencimento"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="01/01/2020"
@@ -74,6 +74,6 @@
         android:text="SPAL INDUSTRIA DE BEBIDAS LTDA"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView9"
+        app:layout_constraintStart_toEndOf="@+id/txt_cheque_data_vencimento"
         app:layout_constraintTop_toBottomOf="@+id/txt_cheque_data_emissao" />
 </androidx.constraintlayout.widget.ConstraintLayout>
