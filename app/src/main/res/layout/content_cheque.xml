@@ -9,13 +9,11 @@
     tools:showIn="@layout/activity_cheque">
 
     <RadioGroup
-        android:id="@+id/radioGroup2"
-        android:layout_width="0dp"
+        android:id="@+id/radioGroupCheque"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -23,6 +21,7 @@
             android:id="@+id/rb_cheque_aberto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:checked="true"
             android:text="@string/lbl_em_aberto" />
 
         <RadioButton
@@ -35,7 +34,7 @@
             android:id="@+id/rb_cheque_nulo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/lbl_Pago" />
+            android:text="@string/lbl_nulo" />
 
         <RadioButton
             android:id="@+id/rb_cheque_todos"
@@ -49,9 +48,20 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/radioGroup2"
-        app:layout_constraintStart_toStartOf="@+id/radioGroup2"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup2" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/radioGroupCheque"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroupCheque" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButtonChequeAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="@+id/radioGroupCheque"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_add_circle_outline_24px" />
 </androidx.constraintlayout.widget.ConstraintLayout>

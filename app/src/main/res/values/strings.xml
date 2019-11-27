@@ -41,5 +41,7 @@
     <string name="lbl_todos">Todos</string>
     <string name="lbl_emissao_abreviado">E:</string>
     <string name="lbl_vencimento_abreviado">V:</string>
+    <string name="lbl_nulo">Nulo</string>
+    <string name="message_erro_nao_possivel_baixar_cheque">Não foi possível baixar o cheque.</string>
 
 </resources>

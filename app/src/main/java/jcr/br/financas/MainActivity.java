@@ -89,8 +89,12 @@ public class MainActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.action_Boleto:
-                Intent actBoleto = new Intent(MainActivity.this, BoletoActivity.class);
+                Intent actBoleto = new Intent(this, BoletoActivity.class);
                 startActivity(actBoleto);
+                break;
+            case R.id.action_Cheque:
+                Intent actCheque = new Intent(this, ChequeActivity.class);
+                startActivity(actCheque);
                 break;
 
         }

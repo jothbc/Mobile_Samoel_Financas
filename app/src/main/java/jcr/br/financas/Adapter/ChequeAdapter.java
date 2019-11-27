@@ -1,5 +1,7 @@
 package jcr.br.financas.Adapter;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +39,7 @@ public class ChequeAdapter extends RecyclerView.Adapter<ChequeAdapter.ChequeView
             holder.pago.setText(cheque.getSaque());
             holder.valor.setText(Conv.colocarPontoEmValor(Conv.validarValue(cheque.getValor())));
             holder.fornecedor.setText(cheque.getFornecedor().getNome());
+            holder.seq.setText(Integer.toString(cheque.getSeq()));
         }
     }
 
@@ -46,7 +49,7 @@ public class ChequeAdapter extends RecyclerView.Adapter<ChequeAdapter.ChequeView
     }
 
     public class ChequeViewHolder extends RecyclerView.ViewHolder{
-        public TextView emissao,vencimento,pago,valor,fornecedor;
+        public TextView emissao,vencimento,pago,valor,fornecedor,seq;
 
         public ChequeViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -55,6 +58,7 @@ public class ChequeAdapter extends RecyclerView.Adapter<ChequeAdapter.ChequeView
             pago = itemView.findViewById(R.id.txt_cheque_data_pago);
             valor = itemView.findViewById(R.id.txt_cheque_valor);
             fornecedor = itemView.findViewById(R.id.txt_cheque_fornecedor);
+            seq = itemView.findViewById(R.id.txt_cheque_seq);
         }
     }
 }
