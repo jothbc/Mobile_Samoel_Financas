@@ -1,13 +1,16 @@
 package jcr.br.financas;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,11 +20,10 @@ import jcr.br.financas.WS.HTTPServicePost;
 import jcr.br.financas.model.Cheque;
 import jcr.br.financas.model.MyException;
 
-import android.widget.RadioButton;
+import android.view.View;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,9 +48,6 @@ public class ChequeActivity extends AppCompatActivity {
         chequeList = new ArrayList<>();
         radioGroup = findViewById(R.id.radioGroupCheque);
 
-        atualizarChequeList();
-        preencherRecycleView();
-
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -68,6 +67,20 @@ public class ChequeActivity extends AppCompatActivity {
                 baixarChequeSelecionado(viewHolder.getAdapterPosition());
             }
         }).attachToRecyclerView(recyclerView);
+
+        FloatingActionButton btnAddCheque = findViewById(R.id.floatingActionButtonChequeAdd);
+        btnAddCheque.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                iniciarLancarProduto();
+            }
+        });
+
+    }
+
+    private void iniciarLancarProduto() {
+        Intent actLancarCheque = new Intent(this, LancarChequeActivity.class);
+        startActivity(actLancarCheque);
     }
 
     private void baixarChequeSelecionado(int adapterPosition) {
@@ -150,5 +163,10 @@ public class ChequeActivity extends AppCompatActivity {
 
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        atualizarChequeList();
+        preencherRecycleView();
+    }
 }

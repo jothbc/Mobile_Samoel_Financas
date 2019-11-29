@@ -43,5 +43,12 @@
     <string name="lbl_vencimento_abreviado">V:</string>
     <string name="lbl_nulo">Nulo</string>
     <string name="message_erro_nao_possivel_baixar_cheque">Não foi possível baixar o cheque.</string>
+    <string name="title_activity_lancar_cheque">Novo Cheque</string>
+    <string name="lbl_sequencia">Sequência</string>
+    <string name="lbl_emissao">Emissão</string>
+    <string name="message_informe_sequencia">Informe a Sequência</string>
+    <string name="message_informe_emissao">Informe a Emissão</string>
+    <string name="message_informe_fornecedor">Informe o Fornecedor</string>
+    <string name="message_informe_valor">Informe o Valor</string>
 
 </resources>

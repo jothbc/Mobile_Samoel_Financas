@@ -37,8 +37,6 @@ public class MainActivity extends AppCompatActivity {
         imposto = findViewById(R.id.editImpostoValorAberto);
         cheque = findViewById(R.id.editChequeValorAberto);
         total = findViewById(R.id.editTotalValorAberto);
-        atualizarValores();
-
     }
 
     private void atualizarValores() {
@@ -102,4 +100,9 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        atualizarValores();
+    }
 }

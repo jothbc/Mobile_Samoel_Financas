@@ -51,12 +51,7 @@ public class BoletoActivity extends AppCompatActivity {
         editFinal = findViewById(R.id.editBoletoDataFinal);
 
         iniciarDatasFiltroList(DIAS_FILTRO);
-        try {
-            definirDatasFiltroList();
-            carregarList();
-        } catch (Exception e) {
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-        }
+
         floatingActionButton = findViewById(R.id.floatingActionLancarBoleto);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,4 +150,14 @@ public class BoletoActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            definirDatasFiltroList();
+            carregarList();
+        } catch (Exception e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
 }

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".LancarChequeActivity"
+    tools:showIn="@layout/activity_lancar_cheque">
+
+    <TextView
+        android:id="@+id/txt_cheque_seq"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/lbl_sequencia"
+        app:layout_constraintBottom_toBottomOf="@+id/editChequeSequencia"
+        app:layout_constraintEnd_toStartOf="@+id/editChequeSequencia"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/editChequeSequencia" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="@string/lbl_emissao"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonChequeEmissao"
+        app:layout_constraintEnd_toStartOf="@+id/buttonChequeEmissao"
+        app:layout_constraintStart_toStartOf="@+id/txt_cheque_seq"
+        app:layout_constraintTop_toTopOf="@+id/buttonChequeEmissao" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="@string/lbl_vencimento"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonChequeVencimento"
+        app:layout_constraintEnd_toStartOf="@+id/buttonChequeVencimento"
+        app:layout_constraintStart_toStartOf="@+id/textView5"
+        app:layout_constraintTop_toTopOf="@+id/buttonChequeVencimento" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/lbl_fornecedor"
+        app:layout_constraintBottom_toBottomOf="@+id/spinnerChequeFornecedor"
+        app:layout_constraintStart_toStartOf="@+id/textView6"
+        app:layout_constraintTop_toTopOf="@+id/spinnerChequeFornecedor" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="@string/lbl_valor"
+        app:layout_constraintBottom_toBottomOf="@+id/editChequeValor"
+        app:layout_constraintEnd_toStartOf="@+id/editChequeValor"
+        app:layout_constraintStart_toStartOf="@+id/textView7"
+        app:layout_constraintTop_toTopOf="@+id/editChequeValor" />
+
+    <EditText
+        android:id="@+id/editChequeSequencia"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/spinnerChequeFornecedor"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="@+id/buttonChequeVencimento"
+        app:layout_constraintStart_toEndOf="@+id/textView7"
+        app:layout_constraintTop_toBottomOf="@+id/buttonChequeVencimento" />
+
+    <EditText
+        android:id="@+id/editChequeValor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="number"
+        android:digits="0123456789,"
+        app:layout_constraintEnd_toEndOf="@+id/spinnerChequeFornecedor"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerChequeFornecedor" />
+
+    <CalendarView
+        android:id="@+id/calendarViewCheque"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editChequeValor" />
+
+    <Button
+        android:id="@+id/buttonChequeEmissao"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="@+id/editChequeSequencia"
+        app:layout_constraintStart_toStartOf="@+id/editChequeSequencia"
+        app:layout_constraintTop_toBottomOf="@+id/editChequeSequencia" />
+
+    <Button
+        android:id="@+id/buttonChequeVencimento"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="@+id/buttonChequeEmissao"
+        app:layout_constraintStart_toStartOf="@+id/buttonChequeEmissao"
+        app:layout_constraintTop_toBottomOf="@+id/buttonChequeEmissao" />
+</androidx.constraintlayout.widget.ConstraintLayout>
