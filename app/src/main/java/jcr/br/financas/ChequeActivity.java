@@ -64,7 +64,10 @@ public class ChequeActivity extends AppCompatActivity {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                baixarChequeSelecionado(viewHolder.getAdapterPosition());
+                if (direction == ItemTouchHelper.RIGHT)
+                    baixarChequeSelecionado(viewHolder.getAdapterPosition());
+                else if(direction == ItemTouchHelper.LEFT)
+                    deletarCheque(viewHolder.getAdapterPosition());
             }
         }).attachToRecyclerView(recyclerView);
 
@@ -76,6 +79,13 @@ public class ChequeActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void deletarCheque(int adapterPosition) {
+        Cheque cheque = chequeList.get(adapterPosition);
+        /*
+            deletar cheque arrastado para a esquerda
+         */
     }
 
     private void iniciarLancarProduto() {
