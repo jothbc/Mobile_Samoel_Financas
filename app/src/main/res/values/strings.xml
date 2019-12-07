@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Financas</string>
+    <string name="app_name">Financas Sup. Correia</string>
     <string name="action_settings">Settings</string>
     <string name="action_filtro_data">Filtro Data</string>
     <string name="action_boleto">Boleto</string>
@@ -50,5 +50,10 @@
     <string name="message_informe_emissao">Informe a Emissão</string>
     <string name="message_informe_fornecedor">Informe o Fornecedor</string>
     <string name="message_informe_valor">Informe o Valor</string>
+    <string name="message_confirmar_exclusao_cheque">Deseja Excluir esse Cheque?</string>
+    <string name="title_confirmacao">Confirmação</string>
+    <string name="message_confirmar_baixa_cheque">Deseja dar baixa nesse Cheque?</string>
+    <string name="lbl_cadastrar">Cadastrar</string>
+    <string name="lbl_cancelar">Cancelar</string>
 
 </resources>

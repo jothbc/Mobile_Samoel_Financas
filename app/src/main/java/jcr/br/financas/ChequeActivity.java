@@ -1,6 +1,10 @@
 package jcr.br.financas;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -45,6 +49,7 @@ public class ChequeActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.list_cheques_rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+
         chequeList = new ArrayList<>();
         radioGroup = findViewById(R.id.radioGroupCheque);
 
@@ -66,7 +71,7 @@ public class ChequeActivity extends AppCompatActivity {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 if (direction == ItemTouchHelper.RIGHT)
                     baixarChequeSelecionado(viewHolder.getAdapterPosition());
-                else if(direction == ItemTouchHelper.LEFT)
+                else if (direction == ItemTouchHelper.LEFT)
                     deletarCheque(viewHolder.getAdapterPosition());
             }
         }).attachToRecyclerView(recyclerView);
@@ -81,11 +86,41 @@ public class ChequeActivity extends AppCompatActivity {
 
     }
 
-    private void deletarCheque(int adapterPosition) {
-        Cheque cheque = chequeList.get(adapterPosition);
-        /*
-            deletar cheque arrastado para a esquerda
-         */
+    private void deletarCheque(final int adapterPosition) {
+        //Cria o gerador do AlertDialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        //define o titulo
+        builder.setTitle(getString(R.string.title_confirmacao));
+        //define a mensagem
+        builder.setMessage(getString(R.string.message_confirmar_exclusao_cheque));
+        //define um botão como positivo
+        builder.setPositiveButton("SIM", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                Cheque cheque = chequeList.get(adapterPosition);
+                try {
+                    String respose = new HTTPService("Cheque/excluir/", Integer.toString(cheque.getSeq()), "GET").execute().get();
+                    if (respose != null) {
+                        if (respose.equals("true")) {
+                            chequeList.remove(adapterPosition);
+                            preencherRecycleView();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "ERRO: " + String.valueOf(MyException.code), Toast.LENGTH_LONG).show();
+                            preencherRecycleView();
+                        }
+                    }
+                } catch (ExecutionException | InterruptedException | MalformedURLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        //define um botão como negativo.
+        builder.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                preencherRecycleView();
+            }
+        });
+        AlertDialog alerta = builder.create();
+        alerta.show();
     }
 
     private void iniciarLancarProduto() {
@@ -93,34 +128,47 @@ public class ChequeActivity extends AppCompatActivity {
         startActivity(actLancarCheque);
     }
 
-    private void baixarChequeSelecionado(int adapterPosition) {
-        Cheque cheque = chequeList.get(adapterPosition);
+    private void baixarChequeSelecionado(final int adapterPosition) {
+        final Cheque cheque = chequeList.get(adapterPosition);
         if (cheque.getSaque() != null || cheque.getEmissao() == null) {
             Toast.makeText(this, (R.string.message_erro_nao_possivel_baixar_cheque), Toast.LENGTH_LONG).show();
             preencherRecycleView();
             return;
         }
-        String response = null;
-        try {
-            response = new HTTPServicePost(String.valueOf(cheque.getSeq()), "Cheque/post", "POST").execute().get();
-            if (response != null) {
-                if (response.equals("true")) {
-                    chequeList.remove(adapterPosition);
-                    preencherRecycleView();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.title_confirmacao));
+        builder.setMessage(getString(R.string.message_confirmar_baixa_cheque));
+        builder.setPositiveButton("SIM", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                try {
+                    String response = new HTTPServicePost(String.valueOf(cheque.getSeq()), "Cheque/post", "POST").execute().get();
+                    if (response != null) {
+                        if (response.equals("true")) {
+                            chequeList.remove(adapterPosition);
+                            preencherRecycleView();
+                        }
+                        if (response.equals("false")) {
+                            Toast.makeText(getApplicationContext(), (R.string.message_erro_nao_possivel_baixar_cheque), Toast.LENGTH_LONG).show();
+                            preencherRecycleView();
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(), String.valueOf(MyException.code), Toast.LENGTH_LONG).show();
+                        preencherRecycleView();
+                    }
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
                 }
-                if (response.equals("false")) {
-                    Toast.makeText(this, (R.string.message_erro_nao_possivel_baixar_cheque), Toast.LENGTH_LONG).show();
-                    preencherRecycleView();
-                }
-            } else {
-                Toast.makeText(this, String.valueOf(MyException.code), Toast.LENGTH_LONG).show();
+            }
+        });
+        builder.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
                 preencherRecycleView();
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+        });
+        AlertDialog alerta = builder.create();
+        alerta.show();
+
     }
 
     private void preencherRecycleView() {
@@ -133,16 +181,16 @@ public class ChequeActivity extends AppCompatActivity {
         try {
             switch (radioGroup.getCheckedRadioButtonId()) {
                 case R.id.rb_cheque_todos:
-                    request = new HTTPService("Cheque/get/", "tudo").execute().get();
+                    request = new HTTPService("Cheque/get/", "tudo", "GET").execute().get();
                     break;
                 case R.id.rb_cheque_aberto:
-                    request = new HTTPService("Cheque/get/", "aberto").execute().get();
+                    request = new HTTPService("Cheque/get/", "aberto", "GET").execute().get();
                     break;
                 case R.id.rb_cheque_pago:
-                    request = new HTTPService("Cheque/get/", "pago").execute().get();
+                    request = new HTTPService("Cheque/get/", "pago", "GET").execute().get();
                     break;
                 case R.id.rb_cheque_nulo:
-                    request = new HTTPService("Cheque/get/", "nulo").execute().get();
+                    request = new HTTPService("Cheque/get/", "nulo", "GET").execute().get();
                     break;
             }
         } catch (InterruptedException e) {
@@ -161,12 +209,12 @@ public class ChequeActivity extends AppCompatActivity {
                 chequeList = new ArrayList<>();
                 chequeList.addAll(Arrays.asList(new Gson().fromJson(request, Cheque[].class)));
             } catch (Exception e) {
-                System.err.println("CODIGO EXEPTION " + MyException.code);
+                System.err.println("CODIGO EXCEPTION " + MyException.code);
                 chequeList = new ArrayList<>();
                 Toast.makeText(this, request, Toast.LENGTH_SHORT).show();
             }
         } else {
-            System.err.println("CODIGO EXEPTION " + MyException.code);
+            System.err.println("CODIGO EXCEPTION " + MyException.code);
             Toast.makeText(this, String.valueOf(MyException.code), Toast.LENGTH_SHORT).show();
             chequeList = new ArrayList<>();
         }

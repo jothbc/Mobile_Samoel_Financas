@@ -14,16 +14,18 @@ import jcr.br.financas.model.MyException;
 public class HTTPService extends AsyncTask<String, Void, String> {
     private final URL url;
     private final String base = "http://187.4.229.36:9999/mercadows/webresources/ws2/";
+    private final String metodo;
 
-    public HTTPService(String url, String parametro) throws MalformedURLException {
+    public HTTPService(String url, String parametro,String metodo) throws MalformedURLException {
         this.url = new URL(base + url + parametro);
+        this.metodo=metodo;
     }
 
     protected String doInBackground(String... ex) {
         StringBuilder resposta = new StringBuilder();
         try {
             HttpURLConnection request = (HttpURLConnection) url.openConnection();
-            request.setRequestMethod("GET");
+            request.setRequestMethod(metodo);
             request.setRequestProperty("Accept", "application/json");
             request.setConnectTimeout(3000);
             request.connect();

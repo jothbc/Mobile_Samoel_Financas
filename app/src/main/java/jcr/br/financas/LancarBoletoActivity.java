@@ -101,7 +101,7 @@ public class LancarBoletoActivity extends AppCompatActivity {
             return;
         }
         try {
-            HTTPService service = new HTTPService("/Boleto/get/testeFornecedor/", codigo);
+            HTTPService service = new HTTPService("/Boleto/get/testeFornecedor/", codigo,"GET");
             String request = service.execute().get();
             if (request != null && !request.equals("[]")) {
                 fornecedores = new Gson().fromJson(request, Fornecedor[].class);
@@ -190,7 +190,11 @@ public class LancarBoletoActivity extends AppCompatActivity {
             String value = valorEdit.getText().toString().replaceAll(",", ".");
             boleto.setValor(Double.parseDouble(value));
 
-            boleto.setVencimento(vencimentoEdit.getText().toString());
+
+            String vencimento_temp = vencimentoEdit.getText().toString();
+            vencimento_temp = vencimento_temp.replaceAll("\\.","/");
+            vencimento_temp = vencimento_temp.replaceAll("-.","/");
+            boleto.setVencimento(vencimento_temp);
 
             HTTPServicePost httpServicePost = new HTTPServicePost(new Gson().toJson(boleto), "Boleto/post/", "POST");
             String response = httpServicePost.execute().get();

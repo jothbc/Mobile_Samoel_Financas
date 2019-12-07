@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
-    android:orientation="vertical">
+    android:foreground="?attr/selectableItemBackground"
+    android:orientation="vertical"
+    android:padding="8dp">
 
     <TextView
         android:id="@+id/txt_data"
@@ -21,6 +22,7 @@
         android:id="@+id/txt_pago"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
+        android:textColor="#2196F3"
         app:layout_constraintStart_toEndOf="@+id/txt_data"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@tools:sample/date/ddmmyy" />
@@ -40,9 +42,10 @@
         android:id="@+id/txt_fornecedor"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:text="Jonathan CR"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/txt_data"
+        app:layout_constraintStart_toStartOf="@+id/txt_data"
         app:layout_constraintTop_toBottomOf="@+id/txt_data" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -18,9 +18,10 @@ import jcr.br.financas.model.Cheque;
 public class ChequeAdapter extends RecyclerView.Adapter<ChequeAdapter.ChequeViewHolder> {
     List<Cheque> cheques;
 
-    public ChequeAdapter(List<Cheque> cheques){
+    public ChequeAdapter(List<Cheque> cheques) {
         this.cheques = cheques;
     }
+
     @NonNull
     @Override
     public ChequeAdapter.ChequeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -32,7 +33,7 @@ public class ChequeAdapter extends RecyclerView.Adapter<ChequeAdapter.ChequeView
 
     @Override
     public void onBindViewHolder(@NonNull ChequeAdapter.ChequeViewHolder holder, int position) {
-        if(cheques!=null && !cheques.isEmpty()){
+        if (cheques != null && !cheques.isEmpty()) {
             Cheque cheque = cheques.get(position);
             holder.emissao.setText(cheque.getEmissao());
             holder.vencimento.setText(cheque.getPredatado());
@@ -48,8 +49,8 @@ public class ChequeAdapter extends RecyclerView.Adapter<ChequeAdapter.ChequeView
         return cheques.size();
     }
 
-    public class ChequeViewHolder extends RecyclerView.ViewHolder{
-        public TextView emissao,vencimento,pago,valor,fornecedor,seq;
+    public class ChequeViewHolder extends RecyclerView.ViewHolder {
+        public TextView emissao, vencimento, pago, valor, fornecedor, seq;
 
         public ChequeViewHolder(@NonNull View itemView) {
             super(itemView);

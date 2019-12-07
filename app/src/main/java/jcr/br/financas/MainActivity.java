@@ -41,9 +41,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void atualizarValores() {
         try {
-            String boletoString = new HTTPService("Boleto/get/valor/aberto", "").execute().get();
-            String chequeString = new HTTPService("Cheque/get/valor/aberto", "").execute().get();
-            String impostoString = new HTTPService("Imposto/get/valor/aberto", "").execute().get();
+            String boletoString = new HTTPService("Boleto/get/valor/aberto", "","GET").execute().get();
+            String chequeString = new HTTPService("Cheque/get/valor/aberto", "","GET").execute().get();
+            String impostoString = new HTTPService("Imposto/get/valor/aberto", "","GET").execute().get();
             double valor_aberto = 0;
             if (boletoString != null) {
                 valor_aberto += new Gson().fromJson(boletoString, Double.class);

@@ -72,17 +72,25 @@ public class BoletoActivity extends AppCompatActivity {
     private void definirDatasFiltroList() throws Exception {
         try {
             Date ini, fim;
-            ini = new SimpleDateFormat("dd/MM/yyyy").parse(editInicial.getText().toString());
-            filtroData.inicio = editInicial.getText().toString();
+            String ini_temp = editInicial.getText().toString();
+            ini_temp = ini_temp.replaceAll("\\.", "/");
+            ini_temp = ini_temp.replaceAll("-", "/");
+            ini = new SimpleDateFormat("dd/MM/yyyy").parse(ini_temp);
+            editInicial.setText(ini_temp);
+            filtroData.inicio = ini_temp;
             try {
-                fim = new SimpleDateFormat("dd/MM/yyyy").parse(editFinal.getText().toString());
+                String fim_temp = editFinal.getText().toString();
+                fim_temp = fim_temp.replaceAll("\\.", "/");
+                fim_temp = fim_temp.replaceAll("-", "/");
+                fim = new SimpleDateFormat("dd/MM/yyyy").parse(fim_temp);
                 if (fim.before(ini)) {
                     throw new Exception(getString(R.string.erro_data_inicial_maior_final));
                 }
-                filtroData.fim = editFinal.getText().toString();
+                filtroData.fim = fim_temp;
+                editFinal.setText(fim_temp);
             } catch (ParseException e) {
-                editFinal.setText(editInicial.getText());
-                filtroData.fim = editInicial.getText().toString();
+                editFinal.setText(ini_temp);
+                filtroData.fim = ini_temp;
             }
         } catch (ParseException e) {
             throw new Exception(getString(R.string.erro_data_inicial_invalida));
@@ -94,7 +102,7 @@ public class BoletoActivity extends AppCompatActivity {
         try {
             String url = "Boleto/get/periodo/";
             String param = filtroData.toString();
-            HTTPService service = new HTTPService(url, param);
+            HTTPService service = new HTTPService(url, param,"GET");
             String request = service.execute().get();
             List<Boleto> boletos = new ArrayList<>();
             if (request == null) {
@@ -123,7 +131,7 @@ public class BoletoActivity extends AppCompatActivity {
                     }
                 }
             }
-            txt_valor_aberto.setText(getString(R.string.lbl_valor_em_aberto) + " R$" +Conv.colocarPontoEmValor(Conv.validarValue(valor_aberto)));
+            txt_valor_aberto.setText(getString(R.string.lbl_valor_em_aberto) + " R$" + Conv.colocarPontoEmValor(Conv.validarValue(valor_aberto)));
         } catch (IOException e) {
             e.printStackTrace();
             txt_valor_aberto.setText(e.getMessage());
