@@ -16,6 +16,7 @@ import jcr.br.financas.model.MyException;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.net.MalformedURLException;
 import java.util.concurrent.ExecutionException;
@@ -58,18 +59,15 @@ public class MainActivity extends AppCompatActivity {
                 cheque.setText("0,00");
             }
             if (impostoString != null) {
-                valor_aberto += new Gson().fromJson(chequeString, Double.class);
-                imposto.setText(Conv.colocarPontoEmValor(Conv.validarValue(new Gson().fromJson(chequeString, Double.class))));
+                valor_aberto += new Gson().fromJson(impostoString, Double.class);
+                imposto.setText(Conv.colocarPontoEmValor(Conv.validarValue(new Gson().fromJson(impostoString, Double.class))));
             } else {
                 imposto.setText("0,00");
             }
             total.setText(Conv.colocarPontoEmValor(Conv.validarValue(valor_aberto)));
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | InterruptedException | ExecutionException e) {
             e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+            Toast.makeText(this,e.getMessage(),Toast.LENGTH_LONG).show();
         }
     }
 
@@ -93,6 +91,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_Cheque:
                 Intent actCheque = new Intent(this, ChequeActivity.class);
                 startActivity(actCheque);
+                break;
+            case R.id.action_Imposto:
+                Intent actImposto = new Intent(this,ImpostoActivity.class);
+                startActivity(actImposto);
                 break;
 
         }

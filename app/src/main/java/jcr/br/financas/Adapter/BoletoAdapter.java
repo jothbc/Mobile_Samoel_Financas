@@ -5,7 +5,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -27,7 +26,7 @@ public class BoletoAdapter extends RecyclerView.Adapter<BoletoAdapter.BoletoView
     @Override
     public BoletoAdapter.BoletoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.linha_boleto, parent, false);
+        View view = layoutInflater.inflate(R.layout.linha_boleto_imposto, parent, false);
         BoletoViewHolder boletoViewHolder = new BoletoViewHolder(view);
         return boletoViewHolder;
     }

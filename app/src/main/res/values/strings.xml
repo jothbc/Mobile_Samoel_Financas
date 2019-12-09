@@ -55,5 +55,6 @@
     <string name="message_confirmar_baixa_cheque">Deseja dar baixa nesse Cheque?</string>
     <string name="lbl_cadastrar">Cadastrar</string>
     <string name="lbl_cancelar">Cancelar</string>
+    <string name="title_activity_imposto">Impostos</string>
 
 </resources>

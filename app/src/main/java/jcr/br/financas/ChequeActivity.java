@@ -11,21 +11,21 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import jcr.br.financas.Adapter.ChequeAdapter;
 import jcr.br.financas.WS.HTTPService;
 import jcr.br.financas.WS.HTTPServicePost;
+import jcr.br.financas.funcoes.Conv;
 import jcr.br.financas.model.Cheque;
 import jcr.br.financas.model.MyException;
 
 import android.view.View;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.net.MalformedURLException;
@@ -38,7 +38,7 @@ public class ChequeActivity extends AppCompatActivity {
     private RadioGroup radioGroup;
     private static List<Cheque> chequeList;
     private RecyclerView recyclerView;
-
+    private TextView lbTotalAberto;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +48,7 @@ public class ChequeActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         recyclerView = findViewById(R.id.list_cheques_rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
+        lbTotalAberto = findViewById(R.id.textChequeTotalAberto);
 
         chequeList = new ArrayList<>();
         radioGroup = findViewById(R.id.radioGroupCheque);
@@ -121,6 +121,7 @@ public class ChequeActivity extends AppCompatActivity {
         });
         AlertDialog alerta = builder.create();
         alerta.show();
+        recyclerView.scrollToPosition(adapterPosition);
     }
 
     private void iniciarLancarProduto() {
@@ -168,12 +169,19 @@ public class ChequeActivity extends AppCompatActivity {
         });
         AlertDialog alerta = builder.create();
         alerta.show();
-
+        recyclerView.scrollToPosition(adapterPosition);
     }
 
     private void preencherRecycleView() {
         ChequeAdapter chequeAdapter = new ChequeAdapter(chequeList);
         recyclerView.setAdapter(chequeAdapter);
+        double valor = 0;
+        for (Cheque i : chequeList) {
+            if (i.getSaque() == null) {
+                valor += i.getValor();
+            }
+        }
+        lbTotalAberto.setText(getString(R.string.lbl_valor_em_aberto)+" R$" + Conv.colocarPontoEmValor(Conv.validarValue(valor)));
     }
 
     private void atualizarChequeList() {

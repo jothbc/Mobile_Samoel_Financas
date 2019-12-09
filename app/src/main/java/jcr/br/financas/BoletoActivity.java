@@ -1,17 +1,22 @@
 package jcr.br.financas;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import jcr.br.financas.Adapter.BoletoAdapter;
 import jcr.br.financas.WS.HTTPService;
+import jcr.br.financas.WS.HTTPServicePost;
 import jcr.br.financas.funcoes.CDate;
 import jcr.br.financas.funcoes.Conv;
 import jcr.br.financas.model.Boleto;
@@ -38,6 +43,8 @@ public class BoletoActivity extends AppCompatActivity {
     private EditText editInicial, editFinal;
     private FloatingActionButton floatingActionButton;
     private static final int DIAS_FILTRO = -7;
+    private RecyclerView listBoletos;
+    private List<Boleto> boletos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +56,27 @@ public class BoletoActivity extends AppCompatActivity {
 
         editInicial = findViewById(R.id.editBoletoDataInicial);
         editFinal = findViewById(R.id.editBoletoDataFinal);
+        listBoletos = findViewById(R.id.list_dados);
+        listBoletos.setHasFixedSize(true);
+        listBoletos.setLayoutManager(new LinearLayoutManager(this));
+        boletos = new ArrayList<>();
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                if (direction == ItemTouchHelper.RIGHT) {
+                    //pagar
+                    pagarBoletoSelecionado(viewHolder.getAdapterPosition());
+                } else if (direction == ItemTouchHelper.LEFT) {
+                    //excluir
+                    excluirBoletoSelecionado(viewHolder.getAdapterPosition());
+                }
+            }
+        }).attachToRecyclerView(listBoletos);
 
         iniciarDatasFiltroList(DIAS_FILTRO);
 
@@ -59,6 +87,101 @@ public class BoletoActivity extends AppCompatActivity {
                 initLancarBoleto(v);
             }
         });
+    }
+
+    private void excluirBoletoSelecionado(final int adapterPosition) {
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setTitle("Confirmação")
+                .setMessage("Deseja Excluir esse Boleto?")
+                .setPositiveButton("SIM", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deletar(adapterPosition);
+                    }
+                })
+                .setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        cancelarAlteracao(adapterPosition);
+                    }
+                }).create();
+        alertDialog.show();
+    }
+
+    private void deletar(int adapterPosition) {
+        Boleto boleto = boletos.get(adapterPosition);
+        try {
+            String response = new HTTPServicePost(new Gson().toJson(boleto), "Boleto/excluir", "POST").execute().get();
+            if (response != null) {
+                if (response.equals("true")) {
+                    boletos.remove(adapterPosition);
+                    preencherList();
+                } else {
+                    Toast.makeText(this, "ERRO: " + response, Toast.LENGTH_LONG).show();
+                    preencherList();
+                }
+            } else {
+                Toast.makeText(this, "ERRO: " + String.valueOf(MyException.code), Toast.LENGTH_LONG).show();
+                preencherList();
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        if (adapterPosition >= 0 && adapterPosition < boletos.size() && boletos.size() > 0)
+            listBoletos.scrollToPosition(adapterPosition);
+    }
+
+    private void pagarBoletoSelecionado(final int adapterPosition) {
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setTitle("Confirmação")
+                .setMessage("Deseja dar Baixa nesse Boleto?")
+                .setPositiveButton("SIM", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        pagar(adapterPosition);
+                    }
+                })
+                .setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        cancelarAlteracao(adapterPosition);
+                    }
+                }).create();
+        alertDialog.show();
+    }
+
+    private void cancelarAlteracao(int adapterPosition) {
+        preencherList();
+        listBoletos.scrollToPosition(adapterPosition);
+    }
+
+    private void pagar(int adapterPosition) {
+        Boleto boleto = boletos.get(adapterPosition);
+        try {
+            String response = new HTTPServicePost(new Gson().toJson(boleto), "Boleto/pagar", "POST").execute().get();
+            if (response != null) {
+                if (response.equals("true")) {
+                    for (Boleto boleto1 : boletos) {
+                        if (boleto1.equals(boleto)) {
+                            boleto1.setPago(CDate.getHojePTBR());
+                            break;
+                        }
+                    }
+                    //boletos.remove(adapterPosition);
+                    preencherList();
+                } else {
+                    Toast.makeText(this, "ERRO: " + response, Toast.LENGTH_LONG).show();
+                    preencherList();
+                }
+            } else {
+                Toast.makeText(this, "ERRO: " + String.valueOf(MyException.code), Toast.LENGTH_LONG).show();
+                preencherList();
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        if (adapterPosition >= 0 && adapterPosition < boletos.size() && boletos.size() > 0)
+            listBoletos.scrollToPosition(adapterPosition);
     }
 
     private void iniciarDatasFiltroList(int diasInicial) {
@@ -98,13 +221,12 @@ public class BoletoActivity extends AppCompatActivity {
     }
 
     private void carregarList() {
-        TextView txt_valor_aberto = findViewById(R.id.txtBoletoValorListaAberto);
         try {
             String url = "Boleto/get/periodo/";
             String param = filtroData.toString();
-            HTTPService service = new HTTPService(url, param,"GET");
+            HTTPService service = new HTTPService(url, param, "GET");
             String request = service.execute().get();
-            List<Boleto> boletos = new ArrayList<>();
+            boletos = new ArrayList<>();
             if (request == null) {
                 switch (MyException.code) {
                     case 204:
@@ -114,34 +236,29 @@ public class BoletoActivity extends AppCompatActivity {
             } else {
                 boletos = Arrays.asList(new Gson().fromJson(request, Boleto[].class));
             }
-            RecyclerView listBoletos = findViewById(R.id.list_dados);
-            listBoletos.setHasFixedSize(true);
-
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-
-            listBoletos.setLayoutManager(linearLayoutManager);
-
-            boletoAdapter = new BoletoAdapter(boletos);
-            listBoletos.setAdapter(boletoAdapter);
-            double valor_aberto = 0;
-            if (!boletos.isEmpty()) {
-                for (Boleto b : boletos) {
-                    if (b.getPago() == null) {
-                        valor_aberto += b.getValor();
-                    }
-                }
-            }
-            txt_valor_aberto.setText(getString(R.string.lbl_valor_em_aberto) + " R$" + Conv.colocarPontoEmValor(Conv.validarValue(valor_aberto)));
+            preencherList();
         } catch (IOException e) {
             e.printStackTrace();
-            txt_valor_aberto.setText(e.getMessage());
         } catch (InterruptedException e) {
             e.printStackTrace();
-            txt_valor_aberto.setText(e.getMessage());
         } catch (ExecutionException e) {
             e.printStackTrace();
-            txt_valor_aberto.setText(e.getMessage());
         }
+    }
+
+    private void preencherList() {
+        TextView txt_valor_aberto = findViewById(R.id.txtBoletoValorListaAberto);
+        boletoAdapter = new BoletoAdapter(boletos);
+        listBoletos.setAdapter(boletoAdapter);
+        double valor_aberto = 0;
+        if (!boletos.isEmpty()) {
+            for (Boleto b : boletos) {
+                if (b.getPago() == null) {
+                    valor_aberto += b.getValor();
+                }
+            }
+        }
+        txt_valor_aberto.setText(getString(R.string.lbl_valor_em_aberto) + " R$" + Conv.colocarPontoEmValor(Conv.validarValue(valor_aberto)));
     }
 
     public void initLancarBoleto(View view) {
