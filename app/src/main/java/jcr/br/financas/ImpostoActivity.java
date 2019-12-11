@@ -1,6 +1,7 @@
 package jcr.br.financas;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -79,6 +80,15 @@ public class ImpostoActivity extends AppCompatActivity {
                 }
             }
         }).attachToRecyclerView(recyclerView);
+
+        FloatingActionButton floatingActionButton = findViewById(R.id.fabImpostoAddNovo);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent cadImposto = new Intent(v.getContext(), LancarImpostoActivity.class);
+                startActivity(cadImposto);
+            }
+        });
     }
 
     private void pagarSelecionado(final int adapterPosition) {
@@ -113,7 +123,7 @@ public class ImpostoActivity extends AppCompatActivity {
     private void pagarConfirmado(int adapterPosition) {
         Imposto imposto = impostoList.get(adapterPosition);
         try {
-            String response = new HTTPServicePost(new Gson().toJson(imposto), "Imposto/pagar", "POST").execute().get();
+            String response = new HTTPServicePost(new Gson().toJson(imposto), "Imposto/pagar/", "POST").execute().get();
             if (response != null) {
                 if (response.equals("true")) {
                     impostoList.remove(adapterPosition);
@@ -150,9 +160,9 @@ public class ImpostoActivity extends AppCompatActivity {
     }
 
     private void excluirConfirmado(int adapterPosition) {
-        Imposto imposto = impostoList.get(adapterPosition);
         try {
-            String response = new HTTPServicePost(new Gson().toJson(imposto), "Imposto/remover", "POST").execute().get();
+            Imposto imposto = impostoList.get(adapterPosition);
+            String response = new HTTPServicePost(new Gson().toJson(imposto), "Imposto/remover/", "POST").execute().get();
             if (response != null) {
                 if (response.equals("true")) {
                     impostoList.remove(adapterPosition);

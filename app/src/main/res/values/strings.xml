@@ -56,5 +56,10 @@
     <string name="lbl_cadastrar">Cadastrar</string>
     <string name="lbl_cancelar">Cancelar</string>
     <string name="title_activity_imposto">Impostos</string>
+    <string name="title_activity_lancar_imposto">Novo Imposto</string>
+    <string name="lbl_descricao">Descrição</string>
+    <string name="message_informe_descricao">Informe a Descrição</string>
+    <string name="message_informe_vencimento">Informe o vencimento</string>
+    <string name="message_informe_vencimento_valido">Informe um vencimento válido (Ex: dd/mm/aaaa)</string>
 
 </resources>
