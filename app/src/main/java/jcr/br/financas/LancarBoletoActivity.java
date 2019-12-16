@@ -1,10 +1,13 @@
 package jcr.br.financas;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -12,11 +15,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import jcr.br.financas.WS.HTTPService;
+import androidx.fragment.app.DialogFragment;
 import jcr.br.financas.WS.HTTPServicePost;
+import jcr.br.financas.WS.WebService;
 import jcr.br.financas.funcoes.BoletoFuncoes;
 import jcr.br.financas.funcoes.CDate;
 import jcr.br.financas.model.Boleto;
+import jcr.br.financas.model.DatePickerFragment;
 import jcr.br.financas.model.Fornecedor;
 import jcr.br.financas.model.MyException;
 
@@ -25,23 +30,28 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.net.MalformedURLException;
 import java.text.DecimalFormat;
-import java.util.concurrent.ExecutionException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
-public class LancarBoletoActivity extends AppCompatActivity {
+public class LancarBoletoActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
     private EditText codigo_barras;
     private Spinner spinnerFornecedor;
     private Fornecedor[] fornecedores;
-    public static String error = null;
 
     public static String cd_barras = null;
 
+    private ProgressBar pbFornecedor;
+    private GetFornecedorAsync getFornecedorAsync;
+    private LancarBoletoAsync lancarBoletoAsync;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +59,8 @@ public class LancarBoletoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_lancar_boleto);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        pbFornecedor = findViewById(R.id.pbBoletoFornecedor);
+        pbFornecedor.setVisibility(View.GONE);
 
         codigo_barras = findViewById(R.id.editBoletoCodigoBarras);
         codigo_barras.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -66,6 +78,15 @@ public class LancarBoletoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 scanCodigoBarras(v);
+            }
+        });
+
+        Button vencimentoEdit = findViewById(R.id.editBoletoVencimento);
+        vencimentoEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment dialogFragment = new DatePickerFragment();
+                dialogFragment.show(getSupportFragmentManager(), "date picker");
             }
         });
 
@@ -92,36 +113,66 @@ public class LancarBoletoActivity extends AppCompatActivity {
     }
 
     private void buscarFornecedores(String codigo) {
-        if (codigo.trim().isEmpty()) {
-            return;
+        getFornecedorAsync = new GetFornecedorAsync(codigo);
+        getFornecedorAsync.execute();
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        Button vencimentoEdit = findViewById(R.id.editBoletoVencimento);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        vencimentoEdit.setText(new SimpleDateFormat("dd/MM/yyyy").format(calendar.getTime()));
+    }
+
+
+    public class GetFornecedorAsync extends AsyncTask<Void, Void, String> {
+
+        private String codigo_temp;
+
+        public GetFornecedorAsync(String codigo) {
+            this.codigo_temp = codigo;
         }
-        codigo = BoletoFuncoes.linhaDigitavelEmCodigoDeBarras(codigo.trim());
-        if (codigo == null) {
-            Toast.makeText(this.getApplicationContext(), (R.string.message_tamanho_codigo_invalido), Toast.LENGTH_LONG).show();
-            return;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pbFornecedor.setVisibility(View.VISIBLE);
         }
-        try {
-            HTTPService service = new HTTPService("/Boleto/get/testeFornecedor/", codigo,"GET");
-            String request = service.execute().get();
-            if (request != null && !request.equals("[]")) {
-                fornecedores = new Gson().fromJson(request, Fornecedor[].class);
-                preecherComboBox();
-                if (preencherVenciment(codigo)) {
-                    preencherValor(codigo);
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            if (codigo_temp.trim().isEmpty()) {
+                return null;
+            }
+            codigo_temp = BoletoFuncoes.linhaDigitavelEmCodigoDeBarras(codigo_temp.trim());
+            if (codigo_temp == null) {
+                Toast.makeText(getApplicationContext(), (R.string.message_tamanho_codigo_invalido), Toast.LENGTH_LONG).show();
+                return null;
+            }
+            String request = WebService.get("Boleto/get/testeFornecedor/" + codigo_temp);
+            return request;
+        }
+
+        @Override
+        protected void onPostExecute(String request) {
+            super.onPostExecute(request);
+            if (request != null) {
+                try {
+                    fornecedores = new Gson().fromJson(request, Fornecedor[].class);
+                    preecherComboBox();
+                    if (preencherVencimento(codigo_temp)) {
+                        preencherValor(codigo_temp);
+                    }
+                } catch (JsonSyntaxException e) {
+                    Toast.makeText(getApplicationContext(), request, Toast.LENGTH_LONG).show();
                 }
             } else {
-                System.out.println("REQUEST NULO/VAZIO");
-                Toast.makeText(this.getApplicationContext(), error, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "ERRO: " + String.valueOf(MyException.code), Toast.LENGTH_LONG).show();
             }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            System.out.println(e);
-        } catch (InterruptedException e) {
-            System.out.println(e);
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            System.out.println(e);
-            e.printStackTrace();
+            pbFornecedor.setVisibility(View.GONE);
         }
     }
 
@@ -131,8 +182,8 @@ public class LancarBoletoActivity extends AppCompatActivity {
         valorEdit.setText(new DecimalFormat("0.00").format(valor));
     }
 
-    private boolean preencherVenciment(String codigo) {
-        EditText vencimentoEdit = findViewById(R.id.editBoletoVencimento);
+    private boolean preencherVencimento(String codigo) {
+        Button vencimentoEdit = findViewById(R.id.editBoletoVencimento);
         String venc_temp = BoletoFuncoes.getVencimento(codigo);
         if (venc_temp.equals(CDate.getDataInicialBanco())) {
             return false;
@@ -169,7 +220,7 @@ public class LancarBoletoActivity extends AppCompatActivity {
     }
 
     public void lancarBoletoBtn(View view) {
-        EditText vencimentoEdit = findViewById(R.id.editBoletoVencimento);
+        Button vencimentoEdit = findViewById(R.id.editBoletoVencimento);
         EditText valorEdit = findViewById(R.id.editBoletoValor);
         EditText codigoEdit = findViewById(R.id.editBoletoCodigoBarras);
         String codigo_barras = BoletoFuncoes.linhaDigitavelEmCodigoDeBarras(codigoEdit.getText().toString().trim());
@@ -177,53 +228,75 @@ public class LancarBoletoActivity extends AppCompatActivity {
             Toast.makeText(this, (R.string.message_tamanho_codigo_invalido), Toast.LENGTH_SHORT).show();
             return;
         }
-        try {
-            if (vencimentoEdit.getText().equals(CDate.getDataInicialBanco())) {
-                Toast.makeText(this, (R.string.message_erro_vencimento_invalido), Toast.LENGTH_SHORT).show();
-                return;
-            }
-            Boleto boleto = new Boleto();
-            boleto.setFornecedor_id((Fornecedor) spinnerFornecedor.getSelectedItem());
+        if (vencimentoEdit.getText().equals(CDate.getDataInicialBanco())) {
+            Toast.makeText(this, (R.string.message_erro_vencimento_invalido), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Boleto boleto = new Boleto();
+        boleto.setFornecedor_id((Fornecedor) spinnerFornecedor.getSelectedItem());
 
-            boleto.setCd_barras(codigo_barras);
+        boleto.setCd_barras(codigo_barras);
 
-            String value = valorEdit.getText().toString().replaceAll(",", ".");
-            boleto.setValor(Double.parseDouble(value));
+        String value = valorEdit.getText().toString().replaceAll(",", ".");
+        boleto.setValor(Double.parseDouble(value));
 
+        String vencimento_temp = vencimentoEdit.getText().toString();
+        vencimento_temp = vencimento_temp.replaceAll("\\.", "/");
+        vencimento_temp = vencimento_temp.replaceAll("-.", "/");
+        boleto.setVencimento(vencimento_temp);
 
-            String vencimento_temp = vencimentoEdit.getText().toString();
-            vencimento_temp = vencimento_temp.replaceAll("\\.","/");
-            vencimento_temp = vencimento_temp.replaceAll("-.","/");
-            boleto.setVencimento(vencimento_temp);
+        lancarBoletoAsync = new LancarBoletoAsync(boleto);
+        lancarBoletoAsync.execute();
 
-            HTTPServicePost httpServicePost = new HTTPServicePost(new Gson().toJson(boleto), "Boleto/post/", "POST");
-            String response = httpServicePost.execute().get();
+    }
+
+    public class LancarBoletoAsync extends AsyncTask<Void, Void, String> {
+
+        private Boleto boleto;
+
+        public LancarBoletoAsync(Boleto boleto) {
+            this.boleto = boleto;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+
+            String response = WebService.post("Boleto/post/", new Gson().toJson(boleto), "POST");
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            super.onPostExecute(response);
             if (response == null) {
-                switch (MyException.code) {
-                    case 304:
-                        Toast.makeText(this, R.string.message_duplicacao_boleto, Toast.LENGTH_SHORT).show();
-                        break;
-                    case 204:
-                        Toast.makeText(this, R.string.message_erro_salvar, Toast.LENGTH_SHORT).show();
-                        break;
-                    case 200://basicamente nem vai usar essa linha, mas caso futuramente a classe HTTPServicePost mude, aqui ainda continua funcionando.
-                        Toast.makeText(this, (R.string.message_concluido), Toast.LENGTH_SHORT).show();
-                        break;
+                if (MyException.code == 304) {
+                    Toast.makeText(getApplicationContext(), R.string.message_duplicacao_boleto, Toast.LENGTH_SHORT).show();
+                } else if (MyException.code == 204) {
+                    Toast.makeText(getApplicationContext(), R.string.message_erro_salvar, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "ERRO: " + String.valueOf(MyException.code), Toast.LENGTH_SHORT).show();
                 }
-                return;
             } else {
-                Toast.makeText(this, (R.string.message_concluido), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                if (MyException.code == 200) {
+                    Button vencimentoEdit = findViewById(R.id.editBoletoVencimento);
+                    EditText valorEdit = findViewById(R.id.editBoletoValor);
+                    EditText codigoEdit = findViewById(R.id.editBoletoCodigoBarras);
+
+                    codigoEdit.setText("");
+                    vencimentoEdit.setText("");
+                    valorEdit.setText("");
+                    fornecedores = new Fornecedor[0];
+                    preecherComboBox();
+                    codigoEdit.requestFocus();
+                }
             }
-        } catch (Exception ex) {
-            System.err.println(ex);
-            Toast.makeText(this, (R.string.message_erro_salvar) + "\n" + ex, Toast.LENGTH_SHORT).show();
-        } finally {
-            codigoEdit.setText("");
-            vencimentoEdit.setText("");
-            valorEdit.setText("");
-            fornecedores = new Fornecedor[0];
-            preecherComboBox();
-            codigoEdit.requestFocus();
         }
     }
 

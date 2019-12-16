@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- *
  * @author User
  */
 public class CDate {
@@ -73,7 +72,7 @@ public class CDate {
     /**
      * Adiciona dias a data informada e retorna com uma nova data ja somado.
      *
-     * @param dias quantidades de dias a ser incrementado
+     * @param dias             quantidades de dias a ser incrementado
      * @param dataPTBR_inicial data inicial em formato PTBR
      * @return uma nova data PTBR com a soma dos dias
      */
@@ -93,7 +92,7 @@ public class CDate {
     /**
      * Incrementa o numero de meses informado a data informada.
      *
-     * @param mes quantidade de meses a ser incrementado.
+     * @param mes              quantidade de meses a ser incrementado.
      * @param dataPTBR_inicial data inicial.
      * @return uma nova data PTBR com o incremento da quantia dos meses
      * informado.
@@ -115,29 +114,43 @@ public class CDate {
      * Função que calcula a quantidade de dias restantes até a o dia de hoje a
      * partir de uma data informada.
      *
-     * @param dataInicio data inicial para contagem de dias restantes
+     * @param data_info data inicial para contagem de dias restantes
      * @return retorna um tipo Long do calculo de dias restantes, caso a data
      * informada gere erro, é retornado 0 para não dar erro de compilação.
      */
-    public static long diasRestantes(String dataInicio) {
+    public static long diasRestantes(String data_info) {
         int dias = 0;
-        Calendar data1 = Calendar.getInstance(), data2 = Calendar.getInstance();
+        Calendar hoje = Calendar.getInstance(), data_informada = Calendar.getInstance();
         try {
-            data2.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(dataInicio));
+            data_informada.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(data_info));
         } catch (java.text.ParseException e) {
             System.err.println("Data informada deve estar em formato incorreto.\n" + e);
             return dias;
         }
-        if (data1.get(Calendar.YEAR) == data2.get(Calendar.YEAR)) {
-            dias = data2.get(Calendar.DAY_OF_YEAR) - data1.get(Calendar.DAY_OF_YEAR);
-        } else if (data1.get(Calendar.YEAR) < data2.get(Calendar.YEAR)) {
-            int bix = 0;
-            if (data1.get(Calendar.YEAR) % 4 == 0 && data1.get(Calendar.YEAR) % 100 != 0 && data1.get(Calendar.YEAR) % 400 == 0) {
-                bix = 366;
-            } else {
-                bix = 365;
+        if (hoje.get(Calendar.YEAR) == data_informada.get(Calendar.YEAR)) {
+            dias = data_informada.get(Calendar.DAY_OF_YEAR) - hoje.get(Calendar.DAY_OF_YEAR);
+        } else if (hoje.get(Calendar.YEAR) < data_informada.get(Calendar.YEAR)) {
+            int dias_ano = 0;
+            int rep = data_informada.get(Calendar.YEAR) - hoje.get(Calendar.YEAR);
+            for (int x = 1; x <= rep; x++) {
+                if (hoje.get(Calendar.YEAR)*x % 4 == 0 && hoje.get(Calendar.YEAR)*x % 100 != 0 && hoje.get(Calendar.YEAR)*x % 400 == 0) {
+                    dias_ano += 366;
+                } else {
+                    dias_ano += 365;
+                }
             }
-            dias = data2.get(Calendar.DAY_OF_YEAR) + bix - data1.get(Calendar.DAY_OF_YEAR);
+            dias = data_informada.get(Calendar.DAY_OF_YEAR) + dias_ano - hoje.get(Calendar.DAY_OF_YEAR);
+        } else if (data_informada.get(Calendar.YEAR) < hoje.get(Calendar.YEAR)) {
+            int bix = 0;
+            int rep = hoje.get(Calendar.YEAR) - data_informada.get(Calendar.YEAR);
+            for (int x = 1; x <= rep; x++) {
+                if (hoje.get(Calendar.YEAR) * x % 4 == 0 && hoje.get(Calendar.YEAR) * x % 100 != 0 && hoje.get(Calendar.YEAR) * x % 400 == 0) {
+                    bix += 366;
+                } else {
+                    bix += 365;
+                }
+            }
+            dias = data_informada.get(Calendar.DAY_OF_YEAR) - (hoje.get(Calendar.DAY_OF_YEAR) + bix);
         }
         return dias;
     }

@@ -96,4 +96,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_add_circle_outline_24px" />
+
+    <ProgressBar
+        android:id="@+id/pbImpostoList"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/rvImpostos"
+        app:layout_constraintEnd_toEndOf="@+id/rvImpostos"
+        app:layout_constraintStart_toStartOf="@+id/rvImpostos"
+        app:layout_constraintTop_toTopOf="@+id/rvImpostos" />
 </androidx.constraintlayout.widget.ConstraintLayout>

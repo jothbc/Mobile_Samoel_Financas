@@ -98,7 +98,7 @@ public class LancarChequeActivity extends AppCompatActivity {
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-                preencherDatas(view, year, month, dayOfMonth);
+                preencherDatas(view, year, month + 1, dayOfMonth);
                 calendarView.setVisibility(View.GONE);
             }
         });

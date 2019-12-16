@@ -1,7 +1,10 @@
 package jcr.br.financas;
 
+import android.app.DatePickerDialog;
+import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -11,20 +14,26 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import jcr.br.financas.Adapter.BoletoAdapter;
 import jcr.br.financas.WS.HTTPService;
 import jcr.br.financas.WS.HTTPServicePost;
+import jcr.br.financas.WS.WebService;
 import jcr.br.financas.funcoes.CDate;
 import jcr.br.financas.funcoes.Conv;
 import jcr.br.financas.model.Boleto;
+import jcr.br.financas.model.DatePickerFragment;
 import jcr.br.financas.model.FiltroData;
 import jcr.br.financas.model.MyException;
 
 import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,18 +42,21 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class BoletoActivity extends AppCompatActivity {
+public class BoletoActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
     private BoletoAdapter boletoAdapter;
     public static FiltroData filtroData;
-    private EditText editInicial, editFinal;
+    private Button editInicial, editFinal;
+    private boolean inicial_click, final_click;
     private FloatingActionButton floatingActionButton;
     private static final int DIAS_FILTRO = -7;
     private RecyclerView listBoletos;
     private List<Boleto> boletos;
+    private ProgressBar pb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,13 +65,35 @@ public class BoletoActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         this.setTitle(getString(R.string.title_boleto));
-
+        inicial_click = false;
+        final_click = false;
+        pb = findViewById(R.id.pbBoletosList);
         editInicial = findViewById(R.id.editBoletoDataInicial);
+        editInicial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inicial_click = true;
+                final_click = false;
+                DialogFragment dialogFragment = new DatePickerFragment();
+                dialogFragment.show(getSupportFragmentManager(), "date picker");
+            }
+        });
         editFinal = findViewById(R.id.editBoletoDataFinal);
+        editFinal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inicial_click = true;
+                final_click = false;
+                DialogFragment dialogFragment = new DatePickerFragment();
+                dialogFragment.show(getSupportFragmentManager(), "date picker");
+            }
+        });
+
         listBoletos = findViewById(R.id.list_dados);
         listBoletos.setHasFixedSize(true);
         listBoletos.setLayoutManager(new LinearLayoutManager(this));
         boletos = new ArrayList<>();
+
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -78,6 +112,7 @@ public class BoletoActivity extends AppCompatActivity {
             }
         }).attachToRecyclerView(listBoletos);
 
+
         iniciarDatasFiltroList(DIAS_FILTRO);
 
         floatingActionButton = findViewById(R.id.floatingActionLancarBoleto);
@@ -89,10 +124,27 @@ public class BoletoActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        if (inicial_click) {
+            editInicial.setText(new SimpleDateFormat("dd/MM/yyyy").format(calendar.getTime()));
+            editFinal.setText(new SimpleDateFormat("dd/MM/yyyy").format(calendar.getTime()));
+        } else if (final_click) {
+            editFinal.setText(new SimpleDateFormat("dd/MM/yyyy").format(calendar.getTime()));
+        }
+        inicial_click = false;
+        final_click = false;
+    }
+
     private void excluirBoletoSelecionado(final int adapterPosition) {
+        Boleto b = boletos.get(adapterPosition);
         AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setTitle("Confirmação")
-                .setMessage("Deseja Excluir esse Boleto?")
+                .setMessage("Deseja Excluir esse Boleto?\n" + b.getVencimento() + "   " + Conv.colocarPontoEmValor(Conv.validarValue(b.getValor())) + "\n" + b.getFornecedor_id().getNome())
                 .setPositiveButton("SIM", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -109,32 +161,14 @@ public class BoletoActivity extends AppCompatActivity {
     }
 
     private void deletar(int adapterPosition) {
-        Boleto boleto = boletos.get(adapterPosition);
-        try {
-            String response = new HTTPServicePost(new Gson().toJson(boleto), "Boleto/excluir", "POST").execute().get();
-            if (response != null) {
-                if (response.equals("true")) {
-                    boletos.remove(adapterPosition);
-                    preencherList();
-                } else {
-                    Toast.makeText(this, "ERRO: " + response, Toast.LENGTH_LONG).show();
-                    preencherList();
-                }
-            } else {
-                Toast.makeText(this, "ERRO: " + String.valueOf(MyException.code), Toast.LENGTH_LONG).show();
-                preencherList();
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        if (adapterPosition >= 0 && adapterPosition < boletos.size() && boletos.size() > 0)
-            listBoletos.scrollToPosition(adapterPosition);
+        new ExcluirAsync(adapterPosition, boletos.get(adapterPosition)).execute();
     }
 
     private void pagarBoletoSelecionado(final int adapterPosition) {
+        Boleto b = boletos.get(adapterPosition);
         AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setTitle("Confirmação")
-                .setMessage("Deseja dar Baixa nesse Boleto?")
+                .setMessage("Deseja dar Baixa nesse Boleto?\n" + b.getVencimento() + "   " + Conv.colocarPontoEmValor(Conv.validarValue(b.getValor())) + "\n" + b.getFornecedor_id().getNome())
                 .setPositiveButton("SIM", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -156,32 +190,7 @@ public class BoletoActivity extends AppCompatActivity {
     }
 
     private void pagar(int adapterPosition) {
-        Boleto boleto = boletos.get(adapterPosition);
-        try {
-            String response = new HTTPServicePost(new Gson().toJson(boleto), "Boleto/pagar", "POST").execute().get();
-            if (response != null) {
-                if (response.equals("true")) {
-                    for (Boleto boleto1 : boletos) {
-                        if (boleto1.equals(boleto)) {
-                            boleto1.setPago(CDate.getHojePTBR());
-                            break;
-                        }
-                    }
-                    //boletos.remove(adapterPosition);
-                    preencherList();
-                } else {
-                    Toast.makeText(this, "ERRO: " + response, Toast.LENGTH_LONG).show();
-                    preencherList();
-                }
-            } else {
-                Toast.makeText(this, "ERRO: " + String.valueOf(MyException.code), Toast.LENGTH_LONG).show();
-                preencherList();
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        if (adapterPosition >= 0 && adapterPosition < boletos.size() && boletos.size() > 0)
-            listBoletos.scrollToPosition(adapterPosition);
+        new PagarAsync(adapterPosition, boletos.get(adapterPosition)).execute();
     }
 
     private void iniciarDatasFiltroList(int diasInicial) {
@@ -220,32 +229,6 @@ public class BoletoActivity extends AppCompatActivity {
         }
     }
 
-    private void carregarList() {
-        try {
-            String url = "Boleto/get/periodo/";
-            String param = filtroData.toString();
-            HTTPService service = new HTTPService(url, param, "GET");
-            String request = service.execute().get();
-            boletos = new ArrayList<>();
-            if (request == null) {
-                switch (MyException.code) {
-                    case 204:
-                        Toast.makeText(this, R.string.message_request_nulo_vazio, Toast.LENGTH_SHORT).show();
-                        break;
-                }
-            } else {
-                boletos = Arrays.asList(new Gson().fromJson(request, Boleto[].class));
-            }
-            preencherList();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void preencherList() {
         TextView txt_valor_aberto = findViewById(R.id.txtBoletoValorListaAberto);
         boletoAdapter = new BoletoAdapter(boletos);
@@ -269,7 +252,7 @@ public class BoletoActivity extends AppCompatActivity {
     public void btn_ok_action(View view) {
         try {
             definirDatasFiltroList();
-            carregarList();
+            new assyncCarregarList().execute();
         } catch (Exception e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
@@ -280,9 +263,134 @@ public class BoletoActivity extends AppCompatActivity {
         super.onResume();
         try {
             definirDatasFiltroList();
-            carregarList();
+            new assyncCarregarList().execute();
         } catch (Exception e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public class assyncCarregarList extends AsyncTask<Void, Void, String> {
+        private List<Boleto> boletoList;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pb.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            String url = "Boleto/get/periodo/";
+            String param = filtroData.toString();
+            String request = WebService.get(url + param);
+            boletoList = new ArrayList<>();
+            if (request == null) {
+                switch (MyException.code) {
+                    case 204:
+                        Toast.makeText(getApplicationContext(), R.string.message_request_nulo_vazio, Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            } else {
+                boletoList = Arrays.asList(new Gson().fromJson(request, Boleto[].class));
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            boletos = boletoList;
+            preencherList();
+            pb.setVisibility(View.GONE);
+        }
+    }
+
+    public class PagarAsync extends AsyncTask<Boleto, Void, String> {
+
+        private int position;
+        private Boleto boleto;
+
+        public PagarAsync(int position, Boleto boleto) {
+            this.position = position;
+            this.boleto = boleto;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pb.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String doInBackground(Boleto... boletos) {
+            String response = WebService.post("Boleto/pagar", new Gson().toJson(boleto), "POST");
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            super.onPostExecute(response);
+            if (response != null) {
+                if (response.equals("true")) {
+                    boletos.get(position).setPago(CDate.getHojePTBR());
+                    preencherList();
+                } else if (response.equals("unmodified")) {
+                    preencherList();
+                } else {
+                    Toast.makeText(getApplicationContext(), "ERRO: " + response, Toast.LENGTH_LONG).show();
+                    preencherList();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "ERRO: " + String.valueOf(MyException.code), Toast.LENGTH_LONG).show();
+                preencherList();
+            }
+            if (position >= 0 && position < boletos.size() && boletos.size() > 0)
+                listBoletos.scrollToPosition(position);
+
+            pb.setVisibility(View.GONE);
+        }
+    }
+
+    public class ExcluirAsync extends AsyncTask<Boleto, Void, String> {
+
+        private int position;
+        private Boleto boleto;
+
+        public ExcluirAsync(int position, Boleto boleto) {
+            this.position = position;
+            this.boleto = boleto;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pb.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String doInBackground(Boleto... boletos) {
+            String response = WebService.post("Boleto/excluir", new Gson().toJson(boleto), "POST");
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            super.onPostExecute(response);
+            if (response != null) {
+                if (response.equals("true")) {
+                    boletos.remove(position);
+                    preencherList();
+                } else {
+                    Toast.makeText(getApplicationContext(), "ERRO: " + response, Toast.LENGTH_LONG).show();
+                    preencherList();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "ERRO: " + String.valueOf(MyException.code), Toast.LENGTH_LONG).show();
+                preencherList();
+            }
+            if (position >= 0 && position < boletos.size() && boletos.size() > 0)
+                listBoletos.scrollToPosition(position);
+            pb.setVisibility(View.GONE);
         }
     }
 }

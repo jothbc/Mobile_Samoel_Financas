@@ -8,29 +8,6 @@
     tools:context=".BoletoActivity"
     tools:showIn="@layout/activity_boleto">
 
-    <EditText
-        android:id="@+id/editBoletoDataInicial"
-        android:layout_width="100dp"
-        android:layout_height="40dp"
-        android:ems="10"
-        android:inputType="date"
-        android:textAlignment="center"
-        android:textSize="10sp"
-        app:layout_constraintStart_toStartOf="@+id/txtFiltroBoletoInicio"
-        app:layout_constraintTop_toBottomOf="@+id/txtFiltroBoletoInicio" />
-
-    <EditText
-        android:id="@+id/editBoletoDataFinal"
-        android:layout_width="100dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="24dp"
-        android:ems="10"
-        android:inputType="date"
-        android:textAlignment="center"
-        android:textSize="10sp"
-        app:layout_constraintStart_toEndOf="@+id/editBoletoDataInicial"
-        app:layout_constraintTop_toTopOf="@+id/editBoletoDataInicial" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_dados"
         android:layout_width="0dp"
@@ -48,7 +25,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
         android:text="@string/lbl_vencimento"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editBoletoDataInicial" />
@@ -75,30 +51,33 @@
         android:id="@+id/buttonBoletoFiltrarData"
         android:layout_width="50dp"
         android:layout_height="40dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="24dp"
         android:onClick="btn_ok_action"
         android:text="@android:string/ok"
         android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@+id/editBoletoDataFinal"
         app:layout_constraintStart_toEndOf="@+id/editBoletoDataFinal"
-        app:layout_constraintTop_toTopOf="@+id/editBoletoDataFinal" />
+        app:layout_constraintTop_toBottomOf="@+id/txtFiltroBoletoFim" />
 
     <TextView
         android:id="@+id/txtFiltroBoletoInicio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/lbl_inicio"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/editBoletoDataInicial"
+        app:layout_constraintStart_toStartOf="@+id/editBoletoDataInicial"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/txtFiltroBoletoFim"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="@string/lbl_fim"
+        app:layout_constraintEnd_toEndOf="@+id/editBoletoDataFinal"
         app:layout_constraintStart_toStartOf="@+id/editBoletoDataFinal"
-        app:layout_constraintTop_toTopOf="@+id/txtFiltroBoletoInicio" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/txtBoletoValorListaAberto"
@@ -109,5 +88,31 @@
         android:textColor="#0E3572"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/list_dados" />
+
+    <ProgressBar
+        android:id="@+id/pbBoletosList"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/list_dados"
+        app:layout_constraintEnd_toEndOf="@+id/list_dados"
+        app:layout_constraintStart_toStartOf="@+id/list_dados"
+        app:layout_constraintTop_toTopOf="@+id/list_dados" />
+
+    <Button
+        android:id="@+id/editBoletoDataFinal"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        app:layout_constraintStart_toEndOf="@+id/editBoletoDataInicial"
+        app:layout_constraintTop_toBottomOf="@+id/txtFiltroBoletoFim" />
+
+    <Button
+        android:id="@+id/editBoletoDataInicial"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtFiltroBoletoInicio" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

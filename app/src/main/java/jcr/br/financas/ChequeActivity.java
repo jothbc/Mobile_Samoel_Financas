@@ -3,8 +3,7 @@ package jcr.br.financas;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -19,11 +18,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import jcr.br.financas.Adapter.ChequeAdapter;
 import jcr.br.financas.WS.HTTPService;
 import jcr.br.financas.WS.HTTPServicePost;
+import jcr.br.financas.WS.WebService;
 import jcr.br.financas.funcoes.Conv;
 import jcr.br.financas.model.Cheque;
 import jcr.br.financas.model.MyException;
 
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +40,9 @@ public class ChequeActivity extends AppCompatActivity {
     private static List<Cheque> chequeList;
     private RecyclerView recyclerView;
     private TextView lbTotalAberto;
+    private ProgressBar pb;
+    ListAsync listAsync;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +53,7 @@ public class ChequeActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.list_cheques_rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         lbTotalAberto = findViewById(R.id.textChequeTotalAberto);
+        pb = findViewById(R.id.pbChequeList);
 
         chequeList = new ArrayList<>();
         radioGroup = findViewById(R.id.radioGroupCheque);
@@ -56,8 +61,7 @@ public class ChequeActivity extends AppCompatActivity {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                atualizarChequeList();
-                preencherRecycleView();
+                new ListAsync().execute();
             }
         });
 
@@ -80,7 +84,7 @@ public class ChequeActivity extends AppCompatActivity {
         btnAddCheque.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                iniciarLancarProduto();
+                iniciarLancarCheque();
             }
         });
 
@@ -124,7 +128,7 @@ public class ChequeActivity extends AppCompatActivity {
         recyclerView.scrollToPosition(adapterPosition);
     }
 
-    private void iniciarLancarProduto() {
+    private void iniciarLancarCheque() {
         Intent actLancarCheque = new Intent(this, LancarChequeActivity.class);
         startActivity(actLancarCheque);
     }
@@ -172,7 +176,7 @@ public class ChequeActivity extends AppCompatActivity {
         recyclerView.scrollToPosition(adapterPosition);
     }
 
-    private void preencherRecycleView() {
+    public void preencherRecycleView() {
         ChequeAdapter chequeAdapter = new ChequeAdapter(chequeList);
         recyclerView.setAdapter(chequeAdapter);
         double valor = 0;
@@ -181,58 +185,70 @@ public class ChequeActivity extends AppCompatActivity {
                 valor += i.getValor();
             }
         }
-        lbTotalAberto.setText(getString(R.string.lbl_valor_em_aberto)+" R$" + Conv.colocarPontoEmValor(Conv.validarValue(valor)));
+        lbTotalAberto.setText(getString(R.string.lbl_valor_em_aberto) + " R$" + Conv.colocarPontoEmValor(Conv.validarValue(valor)));
     }
 
-    private void atualizarChequeList() {
-        String request = null;
-        try {
-            switch (radioGroup.getCheckedRadioButtonId()) {
-                case R.id.rb_cheque_todos:
-                    request = new HTTPService("Cheque/get/", "tudo", "GET").execute().get();
-                    break;
-                case R.id.rb_cheque_aberto:
-                    request = new HTTPService("Cheque/get/", "aberto", "GET").execute().get();
-                    break;
-                case R.id.rb_cheque_pago:
-                    request = new HTTPService("Cheque/get/", "pago", "GET").execute().get();
-                    break;
-                case R.id.rb_cheque_nulo:
-                    request = new HTTPService("Cheque/get/", "nulo", "GET").execute().get();
-                    break;
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        if (request != null) {
-            try {
-                /*
-                    Fazer dessa forma para poder remover, adicionar e tudo mais...
-                    Se for direto da erro ao tentar remover (testado)
-                 */
-                chequeList = new ArrayList<>();
-                chequeList.addAll(Arrays.asList(new Gson().fromJson(request, Cheque[].class)));
-            } catch (Exception e) {
-                System.err.println("CODIGO EXCEPTION " + MyException.code);
-                chequeList = new ArrayList<>();
-                Toast.makeText(this, request, Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            System.err.println("CODIGO EXCEPTION " + MyException.code);
-            Toast.makeText(this, String.valueOf(MyException.code), Toast.LENGTH_SHORT).show();
-            chequeList = new ArrayList<>();
-        }
-
-    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        atualizarChequeList();
-        preencherRecycleView();
+        listAsync = new ListAsync();
+        listAsync.execute();
+    }
+
+    public class ListAsync extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pb.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            String request = null;
+            switch (radioGroup.getCheckedRadioButtonId()) {
+                case R.id.rb_cheque_todos:
+                    request = WebService.get("Cheque/get/tudo");//new HTTPService("Cheque/get/", "tudo", "GET").execute().get();
+                    break;
+                case R.id.rb_cheque_aberto:
+                    request = WebService.get("Cheque/get/aberto");//new HTTPService("Cheque/get/", "aberto", "GET").execute().get();
+                    break;
+                case R.id.rb_cheque_pago:
+                    request = WebService.get("Cheque/get/pago");//new HTTPService("Cheque/get/", "pago", "GET").execute().get();
+                    break;
+                case R.id.rb_cheque_nulo:
+                    request = WebService.get("Cheque/get/nulo");//new HTTPService("Cheque/get/", "nulo", "GET").execute().get();
+                    break;
+            }
+            return request;
+        }
+
+        @Override
+        protected void onPostExecute(String request) {
+            super.onPostExecute(request);
+            if (request != null) {
+                try {
+                    chequeList = new ArrayList<>();
+                    chequeList.addAll(Arrays.asList(new Gson().fromJson(request, Cheque[].class)));
+                } catch (Exception e) {
+                    System.err.println("CODIGO EXCEPTION " + MyException.code);
+                    chequeList = new ArrayList<>();
+                    Toast.makeText(getApplicationContext(), request + "\n" + String.valueOf(MyException.code), Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                System.err.println("CODIGO EXCEPTION " + MyException.code);
+                Toast.makeText(getApplicationContext(), String.valueOf(MyException.code), Toast.LENGTH_SHORT).show();
+                chequeList = new ArrayList<>();
+            }
+            preencherRecycleView();
+            pb.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        listAsync.cancel(true);
     }
 }

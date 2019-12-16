@@ -2,6 +2,7 @@ package jcr.br.financas;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -19,11 +20,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import jcr.br.financas.Adapter.ImpostoAdapter;
 import jcr.br.financas.WS.HTTPService;
 import jcr.br.financas.WS.HTTPServicePost;
+import jcr.br.financas.WS.WebService;
 import jcr.br.financas.funcoes.Conv;
 import jcr.br.financas.model.Imposto;
 import jcr.br.financas.model.MyException;
 
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +45,7 @@ public class ImpostoActivity extends AppCompatActivity {
     private ImpostoAdapter impostoAdapter;
     private TextView lbTotalAberto;
     private RadioGroup radioGroup;
+    private ProgressBar pb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +54,7 @@ public class ImpostoActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         impostoList = new ArrayList<>();
+        pb =findViewById(R.id.pbImpostoList);
         recyclerView = findViewById(R.id.rvImpostos);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -58,8 +63,7 @@ public class ImpostoActivity extends AppCompatActivity {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                carregarList();
-                preencherRV();
+                new assyncCarregarList().execute();
             }
         });
 
@@ -181,37 +185,52 @@ public class ImpostoActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        carregarList();
-        preencherRV();
+        new assyncCarregarList().execute();
     }
 
-    private void carregarList() {
-        impostoList = new ArrayList<>();
-        String param = "";
-        switch (radioGroup.getCheckedRadioButtonId()) {
-            case R.id.rbImpostoAberto:
-                param = "aberto";
-                break;
-            case R.id.rbImpostoTodos:
-                param = "todos";
-                break;
+    public class assyncCarregarList extends AsyncTask<Void,Void,String>{
+        List<Imposto> impostos;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pb.setVisibility(View.VISIBLE);
         }
-        try {
-            String request = new HTTPService("Imposto/get/", param, "GET").execute().get();
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            impostos = new ArrayList<>();
+            String param = "";
+            switch (radioGroup.getCheckedRadioButtonId()) {
+                case R.id.rbImpostoAberto:
+                    param = "aberto";
+                    break;
+                case R.id.rbImpostoTodos:
+                    param = "todos";
+                    break;
+            }
+            String request = WebService.get("Imposto/get/"+param);//new HTTPService("Imposto/get/", param, "GET").execute().get();
             if (request != null) {
                 try {
                     Imposto[] imp = new Gson().fromJson(request, Imposto[].class);
-                    impostoList.addAll(Arrays.asList(imp));
+                    impostos.addAll(Arrays.asList(imp));
                 } catch (JsonSyntaxException e) {
-                    Toast.makeText(this, request, Toast.LENGTH_LONG).show();
-                    impostoList = new ArrayList<>();
+                    Toast.makeText(getApplicationContext(), request, Toast.LENGTH_LONG).show();
+                    impostos = new ArrayList<>();
                 }
             } else {
-                Toast.makeText(this, "ERRO: " + String.valueOf(MyException.code), Toast.LENGTH_LONG).show();
-                impostoList = new ArrayList<>();
+                Toast.makeText(getApplicationContext(), "ERRO: " + String.valueOf(MyException.code), Toast.LENGTH_LONG).show();
+                impostos = new ArrayList<>();
             }
-        } catch (InterruptedException | ExecutionException | MalformedURLException e) {
-            e.printStackTrace();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            impostoList = impostos;
+            preencherRV();
+            pb.setVisibility(View.GONE);
         }
     }
 

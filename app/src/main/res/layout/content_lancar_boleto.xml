@@ -55,18 +55,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_fornecedor" />
 
-    <EditText
-        android:id="@+id/editBoletoVencimento"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:ems="10"
-        android:inputType="date"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_vencimento" />
-
     <TextView
         android:id="@+id/txt_vencimento"
         android:layout_width="wrap_content"
@@ -127,5 +115,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_codigo"
         app:srcCompat="@drawable/barcode_qr" />
+
+    <ProgressBar
+        android:id="@+id/pbBoletoFornecedor"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="12dp"
+        app:layout_constraintBottom_toBottomOf="@+id/spinnerBoletoFornecedor"
+        app:layout_constraintEnd_toEndOf="@+id/spinnerBoletoFornecedor"
+        app:layout_constraintTop_toTopOf="@+id/spinnerBoletoFornecedor"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/editBoletoVencimento"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_vencimento" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
