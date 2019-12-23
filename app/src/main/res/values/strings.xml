@@ -63,5 +63,9 @@
     <string name="message_informe_vencimento_valido">Informe um vencimento válido (Ex: dd/mm/aaaa)</string>
     <string name="message_carregando">Carregando...</string>
     <string name="message_copiado_area_transferencia">Copiado para Área de Transferência</string>
+    <string name="lbl_filtrar">Filtrar</string>
+    <string name="lbl_dia">Dia</string>
+    <string name="lbl_mes">Mês</string>
+    <string name="message_erro_cheque_alterar_estado">Não foi possível alterar o estado do cheque.</string>
 
 </resources>

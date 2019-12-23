@@ -1,5 +1,7 @@
 package jcr.br.financas;
 
+import android.content.pm.ActivityInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.google.gson.Gson;
@@ -7,7 +9,9 @@ import com.google.gson.Gson;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import jcr.br.financas.WS.HTTPServicePost;
+import jcr.br.financas.WS.WebService;
 import jcr.br.financas.model.Fornecedor;
+import jcr.br.financas.model.MyException;
 
 import android.view.View;
 import android.widget.EditText;
@@ -25,6 +29,7 @@ public class CadFornecedorBoletoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cad_fornecedor_boleto);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         this.setTitle("Cadastrar Fornecedor");
         init();
     }
@@ -35,7 +40,7 @@ public class CadFornecedorBoletoActivity extends AppCompatActivity {
         numero = findViewById(R.id.editCadNumeroFornecedor);
         if (LancarBoletoActivity.cd_barras != null) {
             numero.setText(LancarBoletoActivity.cd_barras.substring(25, 29));
-            banco.setText(LancarBoletoActivity.cd_barras.substring(0,3));
+            banco.setText(LancarBoletoActivity.cd_barras.substring(0, 3));
         }
     }
 
@@ -61,24 +66,38 @@ public class CadFornecedorBoletoActivity extends AppCompatActivity {
         if (!numero.getText().toString().trim().isEmpty()) {
             fornecedor.setNumero(numero.getText().toString().trim());
         }
-        HTTPServicePost httpServicePost = new HTTPServicePost(new Gson().toJson(fornecedor), "Fornecedor/post/", "POST");
-        try {
-            boolean response = new Gson().fromJson(httpServicePost.execute().get(), boolean.class);
-            if(response){
-                Toast.makeText(this,R.string.message_concluido, Toast.LENGTH_SHORT).show();
-                nome.setText("");
-                banco.setText("");
-                numero.setText("");
-            }else{
-                Toast.makeText(this,R.string.message_erro_salvar, Toast.LENGTH_SHORT).show();
-            }
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            Toast.makeText(this,e.getMessage(), Toast.LENGTH_SHORT).show();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            Toast.makeText(this,e.getMessage(), Toast.LENGTH_SHORT).show();
+        new SalvarNovoFornecedorAsync(fornecedor).execute();
+    }
+
+    public class SalvarNovoFornecedorAsync extends AsyncTask<Void, Void, String> {
+
+        Fornecedor fornecedor;
+
+        public SalvarNovoFornecedorAsync(Fornecedor f) {
+            this.fornecedor = f;
         }
 
+        @Override
+        protected String doInBackground(Void... voids) {
+            String response = WebService.post("Fornecedor/post/", new Gson().toJson(fornecedor), "POST");
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            super.onPostExecute(response);
+            if (response != null) {
+                if (response.equals("true")) {
+                    Toast.makeText(getApplicationContext(), R.string.message_concluido, Toast.LENGTH_SHORT).show();
+                    nome.setText("");
+                    banco.setText("");
+                    numero.setText("");
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.message_erro_salvar + "\n" + response, Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.message_erro_salvar + "\n" + String.valueOf(MyException.code), Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

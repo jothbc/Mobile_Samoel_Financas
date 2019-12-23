@@ -15,7 +15,7 @@
         <activity
             android:name=".LancarImpostoActivity"
             android:label="@string/title_activity_lancar_imposto"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ImpostoActivity"
             android:label="@string/title_activity_imposto"

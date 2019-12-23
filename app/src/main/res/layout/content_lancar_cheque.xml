@@ -94,19 +94,6 @@
         app:layout_constraintEnd_toEndOf="@+id/spinnerChequeFornecedor"
         app:layout_constraintTop_toBottomOf="@+id/spinnerChequeFornecedor" />
 
-    <CalendarView
-        android:id="@+id/calendarViewCheque"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editChequeValor" />
-
     <Button
         android:id="@+id/buttonChequeEmissao"
         android:layout_width="0dp"
@@ -124,4 +111,24 @@
         app:layout_constraintEnd_toEndOf="@+id/buttonChequeEmissao"
         app:layout_constraintStart_toStartOf="@+id/buttonChequeEmissao"
         app:layout_constraintTop_toBottomOf="@+id/buttonChequeEmissao" />
+
+    <ProgressBar
+        android:id="@+id/pbChequeFornecedor"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="12dp"
+        app:layout_constraintBottom_toBottomOf="@+id/spinnerChequeFornecedor"
+        app:layout_constraintEnd_toEndOf="@+id/spinnerChequeFornecedor"
+        app:layout_constraintTop_toTopOf="@+id/spinnerChequeFornecedor" />
+
+    <ProgressBar
+        android:id="@+id/pbChequeSequencia"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:layout_constraintBottom_toBottomOf="@+id/editChequeSequencia"
+        app:layout_constraintEnd_toEndOf="@+id/editChequeSequencia"
+        app:layout_constraintStart_toStartOf="@+id/editChequeSequencia"
+        app:layout_constraintTop_toTopOf="@+id/editChequeSequencia" />
 </androidx.constraintlayout.widget.ConstraintLayout>

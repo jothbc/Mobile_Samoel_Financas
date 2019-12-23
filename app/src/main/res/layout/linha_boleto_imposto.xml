@@ -34,6 +34,7 @@
         android:layout_marginEnd="8dp"
         android:text="320,23"
         android:textAlignment="textEnd"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/txt_pago"
         app:layout_constraintTop_toTopOf="parent" />

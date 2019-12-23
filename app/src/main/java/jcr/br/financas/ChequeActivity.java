@@ -91,46 +91,31 @@ public class ChequeActivity extends AppCompatActivity {
     }
 
     private void deletarCheque(final int adapterPosition) {
+        final Cheque cheque = chequeList.get(adapterPosition);
         //Cria o gerador do AlertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         //define o titulo
         builder.setTitle(getString(R.string.title_confirmacao));
         //define a mensagem
-        builder.setMessage(getString(R.string.message_confirmar_exclusao_cheque));
+        builder.setMessage(getString(R.string.message_confirmar_exclusao_cheque) + "\n" + cheque.getSeq() + " R$ " + cheque.getValor() + "\n" + cheque.getFornecedor().getNome());
         //define um botão como positivo
         builder.setPositiveButton("SIM", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
-                Cheque cheque = chequeList.get(adapterPosition);
-                try {
-                    String respose = new HTTPService("Cheque/excluir/", Integer.toString(cheque.getSeq()), "GET").execute().get();
-                    if (respose != null) {
-                        if (respose.equals("true")) {
-                            chequeList.remove(adapterPosition);
-                            preencherRecycleView();
-                        } else {
-                            Toast.makeText(getApplicationContext(), "ERRO: " + String.valueOf(MyException.code), Toast.LENGTH_LONG).show();
-                            preencherRecycleView();
-                        }
-                    }
-                } catch (ExecutionException | InterruptedException | MalformedURLException e) {
-                    e.printStackTrace();
-                }
+                new ChequeModifyAsync(cheque, adapterPosition, "Cheque/excluir/");
             }
         });
         //define um botão como negativo.
         builder.setNegativeButton("Não", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
                 preencherRecycleView();
+                try {
+                    recyclerView.scrollToPosition(adapterPosition);
+                } catch (Exception e) {
+                }
             }
         });
         AlertDialog alerta = builder.create();
         alerta.show();
-        recyclerView.scrollToPosition(adapterPosition);
-    }
-
-    private void iniciarLancarCheque() {
-        Intent actLancarCheque = new Intent(this, LancarChequeActivity.class);
-        startActivity(actLancarCheque);
     }
 
     private void baixarChequeSelecionado(final int adapterPosition) {
@@ -140,40 +125,69 @@ public class ChequeActivity extends AppCompatActivity {
             preencherRecycleView();
             return;
         }
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.title_confirmacao));
-        builder.setMessage(getString(R.string.message_confirmar_baixa_cheque));
+        builder.setMessage(getString(R.string.message_confirmar_baixa_cheque) + "\n" + cheque.getSeq() + " R$ " + cheque.getValor() + "\n" + cheque.getFornecedor().getNome());
         builder.setPositiveButton("SIM", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
-                try {
-                    String response = new HTTPServicePost(String.valueOf(cheque.getSeq()), "Cheque/post", "POST").execute().get();
-                    if (response != null) {
-                        if (response.equals("true")) {
-                            chequeList.remove(adapterPosition);
-                            preencherRecycleView();
-                        }
-                        if (response.equals("false")) {
-                            Toast.makeText(getApplicationContext(), (R.string.message_erro_nao_possivel_baixar_cheque), Toast.LENGTH_LONG).show();
-                            preencherRecycleView();
-                        }
-                    } else {
-                        Toast.makeText(getApplicationContext(), String.valueOf(MyException.code), Toast.LENGTH_LONG).show();
-                        preencherRecycleView();
-                    }
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
+                new ChequeModifyAsync(cheque, adapterPosition, "Cheque/post/");
             }
         });
         builder.setNegativeButton("Não", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
                 preencherRecycleView();
+                try {
+                    recyclerView.scrollToPosition(adapterPosition);
+                } catch (Exception e) {
+                }
             }
         });
         AlertDialog alerta = builder.create();
         alerta.show();
-        recyclerView.scrollToPosition(adapterPosition);
+    }
+
+    public class ChequeModifyAsync extends AsyncTask<Void, Void, String> {
+        private Cheque cheque;
+        private int adapterPosition;
+        private String caminho;
+
+        public ChequeModifyAsync(Cheque cheque, int adapterPosition, String caminho) {
+            this.cheque = cheque;
+            this.adapterPosition = adapterPosition;
+            this.caminho = caminho;
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            String response = WebService.post(caminho, String.valueOf(cheque.getSeq()), "POST");
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            super.onPostExecute(response);
+            if (response != null) {
+                if (response.equals("true")) {
+                    chequeList.remove(adapterPosition);
+                    preencherRecycleView();
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.message_erro_cheque_alterar_estado, Toast.LENGTH_LONG).show();
+                    preencherRecycleView();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), String.valueOf(MyException.code), Toast.LENGTH_LONG).show();
+                preencherRecycleView();
+            }
+            try {
+                recyclerView.scrollToPosition(adapterPosition);
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    private void iniciarLancarCheque() {
+        Intent actLancarCheque = new Intent(this, LancarChequeActivity.class);
+        startActivity(actLancarCheque);
     }
 
     public void preencherRecycleView() {

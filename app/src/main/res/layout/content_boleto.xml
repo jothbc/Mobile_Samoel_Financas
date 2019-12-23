@@ -26,6 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="@string/lbl_vencimento"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editBoletoDataInicial" />
 
@@ -35,6 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:text="@string/lbl_data_pago"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/textView"
         app:layout_constraintTop_toTopOf="@+id/textView" />
 
@@ -42,18 +44,19 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="24dp"
         android:text="@string/lbl_valor"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textView2" />
 
     <Button
         android:id="@+id/buttonBoletoFiltrarData"
-        android:layout_width="50dp"
+        android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_marginStart="24dp"
         android:onClick="btn_ok_action"
-        android:text="@android:string/ok"
+        android:text="@string/lbl_filtrar"
         android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="@+id/editBoletoDataFinal"
         app:layout_constraintStart_toEndOf="@+id/editBoletoDataFinal"

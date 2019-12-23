@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 import jcr.br.financas.WS.HTTPServicePost;
 import jcr.br.financas.WS.WebService;
 import jcr.br.financas.funcoes.BoletoFuncoes;
@@ -25,10 +26,12 @@ import jcr.br.financas.model.DatePickerFragment;
 import jcr.br.financas.model.Fornecedor;
 import jcr.br.financas.model.MyException;
 
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -126,7 +129,6 @@ public class LancarBoletoActivity extends AppCompatActivity implements DatePicke
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         vencimentoEdit.setText(new SimpleDateFormat("dd/MM/yyyy").format(calendar.getTime()));
     }
-
 
     public class GetFornecedorAsync extends AsyncTask<Void, Void, String> {
 
@@ -300,5 +302,11 @@ public class LancarBoletoActivity extends AppCompatActivity implements DatePicke
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (codigo_barras.getText().toString().trim() != "")
+            buscarFornecedores(codigo_barras.getText().toString().trim());
+    }
 
 }

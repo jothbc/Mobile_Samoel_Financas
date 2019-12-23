@@ -15,7 +15,8 @@ import java.net.URL;
 import jcr.br.financas.model.MyException;
 
 public class WebService {
-    private static final String base = "http://187.4.229.36:9999/mercadows/webresources/ws2/";
+    //private static final String base = "http://181.221.135.100:9999/mercadows/webresources/ws2/";
+    private static final String base = "http://192.168.0.158:9999/mercadows/webresources/ws2/";
 
     public static String get(String urlString) {
         try {

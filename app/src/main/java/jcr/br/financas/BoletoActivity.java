@@ -1,9 +1,9 @@
 package jcr.br.financas;
 
 import android.app.DatePickerDialog;
-import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -19,8 +19,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import jcr.br.financas.Adapter.BoletoAdapter;
-import jcr.br.financas.WS.HTTPService;
-import jcr.br.financas.WS.HTTPServicePost;
 import jcr.br.financas.WS.WebService;
 import jcr.br.financas.funcoes.CDate;
 import jcr.br.financas.funcoes.Conv;
@@ -32,12 +30,10 @@ import jcr.br.financas.model.MyException;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,9 +41,9 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class BoletoActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
+
     private BoletoAdapter boletoAdapter;
     public static FiltroData filtroData;
     private Button editInicial, editFinal;
@@ -58,12 +54,17 @@ public class BoletoActivity extends AppCompatActivity implements DatePickerDialo
     private List<Boleto> boletos;
     private ProgressBar pb;
 
+    private CarregarListAsync carregarListAsync;
+    private PagarAsync pagarAsync;
+    private ExcluirAsync excluirAsync;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_boleto);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         this.setTitle(getString(R.string.title_boleto));
         inicial_click = false;
         final_click = false;
@@ -82,8 +83,8 @@ public class BoletoActivity extends AppCompatActivity implements DatePickerDialo
         editFinal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                inicial_click = true;
-                final_click = false;
+                inicial_click = false;
+                final_click = true;
                 DialogFragment dialogFragment = new DatePickerFragment();
                 dialogFragment.show(getSupportFragmentManager(), "date picker");
             }
@@ -112,7 +113,6 @@ public class BoletoActivity extends AppCompatActivity implements DatePickerDialo
             }
         }).attachToRecyclerView(listBoletos);
 
-
         iniciarDatasFiltroList(DIAS_FILTRO);
 
         floatingActionButton = findViewById(R.id.floatingActionLancarBoleto);
@@ -132,7 +132,6 @@ public class BoletoActivity extends AppCompatActivity implements DatePickerDialo
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         if (inicial_click) {
             editInicial.setText(new SimpleDateFormat("dd/MM/yyyy").format(calendar.getTime()));
-            editFinal.setText(new SimpleDateFormat("dd/MM/yyyy").format(calendar.getTime()));
         } else if (final_click) {
             editFinal.setText(new SimpleDateFormat("dd/MM/yyyy").format(calendar.getTime()));
         }
@@ -161,7 +160,8 @@ public class BoletoActivity extends AppCompatActivity implements DatePickerDialo
     }
 
     private void deletar(int adapterPosition) {
-        new ExcluirAsync(adapterPosition, boletos.get(adapterPosition)).execute();
+        excluirAsync = new ExcluirAsync(adapterPosition, boletos.get(adapterPosition));
+        excluirAsync.execute();
     }
 
     private void pagarBoletoSelecionado(final int adapterPosition) {
@@ -190,7 +190,8 @@ public class BoletoActivity extends AppCompatActivity implements DatePickerDialo
     }
 
     private void pagar(int adapterPosition) {
-        new PagarAsync(adapterPosition, boletos.get(adapterPosition)).execute();
+        pagarAsync = new PagarAsync(adapterPosition, boletos.get(adapterPosition));
+        pagarAsync.execute();
     }
 
     private void iniciarDatasFiltroList(int diasInicial) {
@@ -252,7 +253,8 @@ public class BoletoActivity extends AppCompatActivity implements DatePickerDialo
     public void btn_ok_action(View view) {
         try {
             definirDatasFiltroList();
-            new assyncCarregarList().execute();
+            carregarListAsync = new CarregarListAsync();
+            carregarListAsync.execute();
         } catch (Exception e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
@@ -263,13 +265,20 @@ public class BoletoActivity extends AppCompatActivity implements DatePickerDialo
         super.onResume();
         try {
             definirDatasFiltroList();
-            new assyncCarregarList().execute();
+            carregarListAsync = new CarregarListAsync();
+            carregarListAsync.execute();
         } catch (Exception e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
-    public class assyncCarregarList extends AsyncTask<Void, Void, String> {
+    @Override
+    protected void onStop() {
+        super.onStop();
+        carregarListAsync.cancel(true);
+    }
+
+    public class CarregarListAsync extends AsyncTask<Void, Void, String> {
         private List<Boleto> boletoList;
 
         @Override
@@ -393,4 +402,5 @@ public class BoletoActivity extends AppCompatActivity implements DatePickerDialo
             pb.setVisibility(View.GONE);
         }
     }
+
 }
